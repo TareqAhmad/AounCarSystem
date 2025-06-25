@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  
+  
+  <ItemGroup>
+    <PackageReference Include="MySql.Data" Version="9.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Repositories\" />
+    <Folder Include="wwwroot\Images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Pages\Dashboard.html" />
+    <None Include="wwwroot\index.html" />
+    <None Include="wwwroot\Assets\CSS\bootstrap.min.css" />
+    <None Include="wwwroot\Assets\CSS\bootstrap.min.css.map" />
+    <None Include="wwwroot\Assets\CSS\main.css" />
+    <None Include="wwwroot\Assets\CSS\responsive.css" />
+    <None Include="wwwroot\Assets\JS\bootstrap.bundle.min.js" />
+    <None Include="wwwroot\Assets\JS\bootstrap.bundle.min.js.map" />
+    <None Include="wwwroot\Assets\JS\main.js" />
+    <None Include="wwwroot\Pages\CarAttachments.html" />
+    <None Include="wwwroot\Pages\CarMovements.html" />
+    <None Include="wwwroot\Pages\Cars.html" />
+    <None Include="wwwroot\Pages\Costs.html" />
+    <None Include="wwwroot\Pages\Customers.html" />
+    <None Include="wwwroot\Pages\Expenses.html" />
+    <None Include="wwwroot\Pages\Sales.html" />
+    <None Include="wwwroot\Pages\Store.html" />
+    <None Include="wwwroot\Pages\Suppliers.html" />
+    <None Include="wwwroot\Pages\Users.html" />
+    <None Include="wwwroot\Pages\ViewResults.html" />
+  </ItemGroup>
+
+
+
+</Project>

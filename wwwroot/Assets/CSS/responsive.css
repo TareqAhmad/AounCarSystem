@@ -1,0 +1,34 @@
+﻿@media (max-width: 768px) {
+    .nav {
+        position: absolute;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background-color: #1e90ff;
+        flex-direction: column;
+        display: none;
+        padding: 1rem 0;
+    }
+
+        .nav.active {
+            display: flex;
+        }
+
+    .dropdown-content {
+        position: relative;
+        background-color: #0f75d3;
+        box-shadow: none;
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: none;
+    }
+
+    .dropdown.active .dropdown-content {
+        display: flex;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+}

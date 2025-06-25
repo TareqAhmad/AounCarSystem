@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>login Page</title>
+
+    <!-- Font google-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap" rel="stylesheet">
+
+    <!-- Link to local Bootstrap CSS -->
+    <link rel="stylesheet" href="/Assets/CSS/bootstrap.min.css">
+
+    <!-- Main Styles -->
+    <link rel="stylesheet" href="/Assets/CSS/main.css">
+
+    <!-- Responsive Style-->
+    <link rel="stylesheet" href="/Assets/CSS/responsive.css" />
+
+</head>
+<body>
+
+    <div class="d-flex justify-content-center align-items-center vh-100">
+
+        <div class="login-box">
+            <h2>تسجيل الدخول</h2>
+            <input type="text" id="username" placeholder="Username" />
+            <input type="password" id="password" placeholder="Password" />
+            <button onclick="login()">الدخول</button>
+            <p id="message"></p>
+        </div>
+
+    </div>
+
+
+
+
+    <!-- Link to local Bootstrap JS -->
+    <script src="/Assets/JS/bootstrap.bundle.min.js"></script>
+
+    <!-- Link to jquery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <!--Main JS -->
+    <script src="/Assets/JS/main.js"></script>
+
+</body>
+</html>

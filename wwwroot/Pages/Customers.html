@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Customers</title>
+
+    <!-- Font google-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap" rel="stylesheet">
+
+    <!-- Link to local Bootstrap CSS -->
+    <link rel="stylesheet" href="/Assets/CSS/bootstrap.min.css">
+
+    <!-- Main Styles -->
+    <link rel="stylesheet" href="/Assets/CSS/main.css">
+
+    <!-- Responsive Style-->
+    <link rel="stylesheet" href="/Assets/CSS/responsive.css" />
+</head>
+<body>
+    <!-- Header with Top Navigation -->
+    <header class="header">
+        <div class="logo">🌐 MyApp</div>
+        <nav class="nav" id="nav">
+            <div class="dropdown">
+                <a href="#">Cars ▾</a>
+                <div class="dropdown-content">
+                    <a href="/Pages/Cars.html">Cars</a>
+                    <a href="/Pages/CarMovements.html">Car Movements</a>
+                    <a href="/Pages/CarAttachments.html">Car Attachments</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#">Person ▾</a>
+                <div class="dropdown-content">
+                    <a href="/Pages/Users.html">Users</a>
+                    <a href="/Pages/Customers.html">Customers</a>
+                    <a href="/Pages/Suppliers.html">Suppliers</a>
+                </div>
+            </div>
+            <a href="/Pages/Sales.html">Sales</a>
+            <div class="dropdown">
+                <a href="#">Payments ▾</a>
+                <div class="dropdown-content">
+                    <a href="/Pages/Expenses.html">Expenses</a>
+                    <a href="/Pages/Costs.html">Costs</a>
+                </div>
+            </div>
+            <a href="/Pages/Store.html">store</a>
+            <a href="#">Reports</a>
+            <!-- <a href="#">Settings</a> -->
+            <a href="../index.html">Logout</a>
+        </nav>
+        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mt-4 vh-100">
+        <h2>Customers List</h2>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Cust_Id</th>
+                    <th>Customer Name</th>
+                    <th>Phone</th>
+                    <th>Eamil</th>
+                    <th>Address</th>
+                    <th>National Id</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="customer-table-body"></tbody>
+        </table>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        &copy; 2025 Tareq AL-Shbeikat 00962790205293. All rights reserved.
+    </footer>
+
+    <!-- Link to local Bootstrap JS -->
+    <script src="/Assets/JS/bootstrap.bundle.min.js"></script>
+
+    <!-- Link to jquery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <!--Main JS -->
+    <script src="/Assets/JS/main.js"></script>
+</body>
+</html>
