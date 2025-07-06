@@ -57,7 +57,12 @@
 
     <!-- Main Content -->
     <main class="container mt-4 vh-100">
-        <h2>Suppliers List</h2>
+
+        <div class="d-flex justify-content-between align-content-around">
+            <h2>Suppliers List</h2>
+            <button id="btn-addSupplier" class="btn btn-sm btn-success fs-3 w-15">Add</button>
+        </div>
+
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
@@ -71,6 +76,118 @@
             </thead>
             <tbody id="supplier-table-body"></tbody>
         </table>
+
+        <div class="modal fade" id="addSupplierModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Supplier</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-2">
+                            <label>Supplier Id</label>
+                            <input type="text" id="add-supplierId" class="form-control">
+                        </div>
+                        <div class="mb-2">
+                            <label>Supplier Name</label>
+                            <input type="text" id="add-suppliername" class="form-control">
+                        </div>
+                        <div class="mb-2">
+                            <label>Phone</label>
+                            <input type="text" id="add-supplierphone" class="form-control">
+                        </div>
+                        <div class="mb-2">
+                            <label>Eamil</label>
+                            <input type="text" id="add-supplieremail" class="form-control">
+                        </div>
+                        <div class="mb-2">
+                            <label>Address</label>
+                            <input type="text" id="add-supplieraddress" class="form-control">
+                        </div>
+                        <div id="AddMessage" class="mt-2 text-success"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" id="AddSupplier">Save</button>
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="editSupplierModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Supplier</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="SupplierId">
+                        <div class="mb-2">
+                            <label>Supplier Name</label>
+                            <input type="text" id="SupplierName" class="form-control">
+                        </div>
+                        <div class="mb-2">
+                            <label>Phone</label>
+                            <input type="text" id="SupplierPhone" class="form-control">
+                        </div>
+                        <div class="mb-2">
+                            <label>Eamil</label>
+                            <input type="text" id="SupplierEmail" class="form-control">
+                        </div>
+                        <div class="mb-2">
+                            <label>Address</label>
+                            <input type="text" id="SupplierAddress" class="form-control">
+                        </div>
+                        <div id="EditMessage" class="mt-2 text-success"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" id="editSupplier">Save</button>
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="deleteSupplierModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <div class="modal-body">
+                        Are you sure you want to delete this <p id="infoSupplier" class="fw-bold text-danger"></p> This action cannot be undone.
+                        <div id="deleteMessage" class="mt-2 text-success"></div>
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="modal-footer">
+                        <!-- Cancel -->
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+
+                        <!-- Delete -->
+                        <button type="button"
+                                class="btn btn-danger"
+                                id="confirmDeleteSupplierBtn">
+                            Delete
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
     </main>
 
     <!-- Footer -->

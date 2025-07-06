@@ -19,7 +19,12 @@
     min-height: 40vh; 
 }
 
-
+.fs-0 {
+    font-size:1rem;
+}
+.w-15 {
+    width: 15% !important;
+}
 
 * {
     margin: 0;
@@ -33,19 +38,23 @@
     box-sizing: border-box;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
+   
 }
 
 html {
     font-size: 62.5%;
     overflow-x: hidden;
     scroll-behavior: smooth;
+
 }
 
 body {
     font-family: "Cairo", sans-serif;
-   
+    font-size: 1.4rem;
 }
-
+button {
+    font-size : 1.2rem;
+}
 section {
     min-height: 50vh;
 }

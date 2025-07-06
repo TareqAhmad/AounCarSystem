@@ -56,8 +56,42 @@
     </header>
 
     <!-- Main Content -->
-    <main class="content">
-        <h1>Welcome to Store</h1>
+    <main class="container mt-4 vh-100">
+        <h1>Stores List</h1>
+
+        <div class="modal fade" id="editSupplierModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Supplier</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="StoreId">
+                        <div class="mb-2">
+                            <label>Supplier Name</label>
+                            <input type="text" id="ChassisNumber" class="form-control">
+                        </div>
+                        <div class="mb-2">
+                            <label>Phone</label>
+                            <input type="text" id="Location" class="form-control">
+                        </div>
+                        <div class="mb-2">
+                            <label>Eamil</label>
+                            <input type="date" id="Quantity" class="form-control">
+                        </div>
+                        <div class="mb-2">
+                            <label>Address</label>
+                            <input type="text" id="LastUpdate" class="form-control">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" onclick="saveChanges()">Save</button>
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- Footer -->

@@ -13,9 +13,9 @@
 
         public string Description { get; set; }
 
-        public ClsCars ChassisNumber { get; set; }
+        public int ChassisNumber { get; set; }
 
-
+        public string CarName { get; set; }
 
     }
 }

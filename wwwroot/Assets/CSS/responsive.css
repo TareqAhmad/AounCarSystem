@@ -1,4 +1,7 @@
 ﻿@media (max-width: 768px) {
+    body {
+        font-size:1rem; 
+    }
     .nav {
         position: absolute;
         top: 60px;

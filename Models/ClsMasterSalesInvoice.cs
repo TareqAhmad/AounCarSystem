@@ -10,8 +10,10 @@
 
         public int Cust_Id { get; set; }
 
-        public string customerName { get; set; }
+        public string CustomerName { get; set; }
 
-  
+        public List<ClsDetailsSalesInvoice> Details { get; set; } = new List<ClsDetailsSalesInvoice>();
+
+
     }
 }
