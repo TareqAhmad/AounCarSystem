@@ -13,6 +13,7 @@ namespace AounCarSystem.Controllers
             _config = config;
         }
 
+
         [HttpGet("/Suppliers/Get_AllSuppliers")]
         public IActionResult Get_AllSuppliers()
         {
@@ -64,6 +65,7 @@ namespace AounCarSystem.Controllers
 
         }
 
+
         [HttpGet("/Suppliers/Get_SupplierById")]
         public IActionResult Get_SupplierById(int supplierId)
         {
@@ -111,6 +113,7 @@ namespace AounCarSystem.Controllers
 
         }
 
+
         [HttpPost("Suppliers/AddSupplier")]
         public IActionResult AddSupplier(int SupplierId, string Suppliername, string Supplierphone, string Supplieremail, string Supplieraddress)
         {
@@ -140,6 +143,7 @@ namespace AounCarSystem.Controllers
 
 
         }
+
 
         [HttpPost("Suppliers/UpdateSupplier")]
         public IActionResult UpdateCustomer(int SupplierId, string CompanyName, string Phone, string Email, string Address, string CustNationalId)
@@ -175,6 +179,7 @@ namespace AounCarSystem.Controllers
 
         }
 
+
         [HttpPost("/Suppliers/DeleteSupplier")]
         public IActionResult DeleteSupplier(int supplierId)
         {
@@ -202,6 +207,7 @@ namespace AounCarSystem.Controllers
 
             }
         }
+
 
         [HttpGet("/Suppliers/GetSupplierToList")]
         public IActionResult GetSupplierToList()
@@ -235,6 +241,28 @@ namespace AounCarSystem.Controllers
         }
 
 
+        [HttpGet("/Users/Get_NextSupplierId")]
+        public IActionResult Get_NextSupplierId()
+        {
+
+            string connStr = _config.GetConnectionString("MySqlconn");
+
+            using (var conn = new MySqlConnection(connStr))
+            {
+                string sql = @"SELECT IFNULL(MAX(supplier_Id),0) + 1  FROM Suppliers";
+
+                using (var cmd = new MySqlCommand(sql, conn))
+                {
+                    conn.Open();
+                    object result = cmd.ExecuteScalar();
+                    int nextSupplierId = Convert.ToInt32(result);
+                    return Json(nextSupplierId);
+                }
+
+
+
+            }
+        }
 
 
     }

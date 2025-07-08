@@ -12,6 +12,7 @@ namespace AounCarSystem.Controllers
             _config = config;
         }
 
+
         [HttpGet("/Customers/Get_AllCustomers")]
         public IActionResult Get_AllCustomers()
         {
@@ -210,7 +211,6 @@ namespace AounCarSystem.Controllers
 
 
         [HttpGet("/Customer/Get_CustomerInvoice")]
-
         public IActionResult Get_CustomerInvoice()
         {
 
@@ -250,6 +250,33 @@ namespace AounCarSystem.Controllers
             }
 
             }
+
+
+        [HttpGet("/Users/Get_NextCustId")]
+        public IActionResult Get_NextCustId()
+        {
+
+            string connStr = _config.GetConnectionString("MySqlconn");
+
+            using (var conn = new MySqlConnection(connStr))
+            {
+                string sql = @"SELECT IFNULL(MAX(Cust_Id),0) + 1  FROM Customers";
+
+                using (var cmd = new MySqlCommand(sql, conn))
+                {
+                    conn.Open();
+                    object result = cmd.ExecuteScalar();
+                    int nextCustId = Convert.ToInt32(result);
+                    return Json(nextCustId);
+                }
+
+
+
+            }
         }
+
+
+
+    }
 
 }

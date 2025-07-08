@@ -23,8 +23,9 @@
 
     <!-- Header with Top Navigation -->
     <header class="header">
-        <div class="logo">🌐 MyApp</div>
+        <div class="logo fs-4">🌐 Aoun_CarSystem</div>
         <nav class="nav" id="nav">
+            <a href="/Pages/Dashboard.html">dashboard </a>
             <div class="dropdown">
                 <a href="#">Cars ▾</a>
                 <div class="dropdown-content">
@@ -57,10 +58,87 @@
         <div class="menu-toggle" onclick="toggleMenu()">☰</div>
     </header>
 
-    <!-- Main Content -->
-    <main class="content">
-        <h1>Welcome to Dashboard</h1>
-    </main>
+    <div class="container mt-5">
+        <h2 class="mb-4 text-center">🚗 Car System Dashboard</h2>
+
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="card text-white bg-success shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Available Cars</h5>
+                        <h3 id="availableCars">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card text-white bg-primary shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Count Users</h5>
+                        <h3 id="CountUsers">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card text-white bg-warning shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Expenses</h5>
+                        <h3 id="totalExpenses">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card text-white bg-danger shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Cost</h5>
+                        <h3 id="totalCost">0</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Second row -->
+        <div class="row g-4 mt-3">
+            <div class="col-md-3">
+                <div class="card text-white bg-dark shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Cars Sold</h5>
+                        <h3 id="carsSold">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card text-white bg-info shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Cars In Maintenance</h5>
+                        <h3 id="carsInMaintenance">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card text-white bg-secondary shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Pending Payments</h5>
+                        <h3 id="pendingPayments">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card text-white bg-success shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Profit</h5>
+                        <h3 id="totalProfit">0</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Footer -->
     <footer class="footer">
@@ -75,5 +153,31 @@
 
     <!--Main JS -->
     <script src="/Assets/JS/main.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            Call_FunctionsDashboard();
+        });
+
+        function Call_FunctionsDashboard() {
+
+            Get_AvailabeCars();
+
+            Get_CountUsers(); 
+
+            Get_TotalExpenses();
+
+            Get_TotalCosts();
+
+            Get_SoldCars();
+
+            Get_InMaintenanceCars();
+          
+
+            console.log("Dashboard ready");
+        }
+    </script>
+
+
 </body>
 </html>

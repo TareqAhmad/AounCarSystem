@@ -318,5 +318,33 @@ namespace AounCarSystem.Controllers
             }
 
         }
+
+
+
+        [HttpGet("/Cars/Get_ReportCars")]
+        public IActionResult Get_ReportCars(string condition)
+        {
+          
+            string connStr = _config.GetConnectionString("MySqlConn"); 
+
+            using(var conn = new MySqlConnection(connStr))
+            {
+                string sql = $@"SELECT COUNT(*) FROM Cars WHERE Status like '%{condition}%'";
+                
+                using(var cmd = new MySqlCommand(sql, conn))
+                {
+
+                    conn.Open();
+                    object Count = cmd.ExecuteScalar();
+                    int result = Convert.ToInt32(Count);
+                    return Json(result); 
+                }
+
+            }
+        }
+
+
+
+
     }
 }

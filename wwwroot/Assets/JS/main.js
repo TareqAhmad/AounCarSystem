@@ -21,7 +21,8 @@ $(document).ready(function () {
             },
             success: function (response) {
                 if (response.success) {
-                    window.location.href = "/Pages/Dashboard.html";
+                   //  Call_FunctionsDashboard(); 
+                    window.location.href = "/Pages/Dashboardh.html";
                 } else {
                     $("#message").text("اسم المستخدم او كلمة السر غير صحيحة").css("color", "red");
                 }
@@ -43,6 +44,7 @@ function toggleMenu() {
 
 // Handle dropdowns in mobile
 document.addEventListener('DOMContentLoaded', () => {
+
     const dropdownLinks = document.querySelectorAll('.dropdown > a');
 
     dropdownLinks.forEach(link => {
@@ -55,6 +57,113 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+
+/**
+ * 
+ *  Dashboard 
+ * 
+ */
+
+function Call_FunctionsDashboard() {
+    
+    Get_AvailabeCars(); 
+
+    Get_SoldCars(); 
+
+    Get_InMaintenanceCars(); 
+
+    console.log("hello");
+
+}
+
+
+function Get_AvailabeCars() {
+
+    // Available Car
+    $.ajax({
+        type: 'GET',
+        url: '/Cars/Get_ReportCars',
+        data: { condition: "Available" },
+        success: function (response) {
+            $("#availableCars").text(response);
+        },
+        error: function () { },
+
+    });
+}
+
+
+function Get_CountUsers() {
+
+    $.ajax({
+        type: 'GET',
+        url: '/Users/Get_CountUsers',
+        success: function (response) {
+            $("#CountUsers").text(response); 
+        },
+        error: function () {
+
+        }
+
+
+    }); 
+}
+
+function Get_SoldCars() {
+    // Sold Cars 
+    $.ajax({
+        type: 'GET',
+        url: '/Cars/Get_ReportCars',
+        data: { condition: "Sold" },
+        success: function (response) {
+            $("#carsSold").text(response);
+        },
+        error: function () { },
+
+    });
+}
+
+function Get_InMaintenanceCars() {
+    // In Maintenance
+    $.ajax({
+        type: 'GET',
+        url: '/Cars/Get_ReportCars',
+        data: { condition: "In Maintenance" },
+        success: function (response) {
+            $("#carsInMaintenance").text(response);
+        },
+        error: function () { },
+
+    });
+}
+
+function Get_TotalExpenses() {
+
+    $.ajax({
+        type: 'GET',
+        url: '/Expenses/Get_TotalExpenses',
+        success: function (response) {
+            $("#totalExpenses").text(response);
+
+        },
+        error: function () { }
+
+    }); 
+}
+function Get_TotalCosts() {
+
+    $.ajax({
+        type: 'GET',
+        url: '/Costs/Get_TotalCosts',
+        success: function (response) {
+            $("#totalCost").text(response);
+        },
+        error: function () { }
+
+
+
+    }); 
+}
 
     /**
      *  Dealing With Cars 
@@ -403,7 +512,6 @@ $("#AddUser").off().on("click", function () {
 
 
 });
-
 
 $("#editUser").off().on("click", function () {
 

@@ -52,12 +52,14 @@ body {
     font-family: "Cairo", sans-serif;
     font-size: 1.4rem;
 }
+
 button {
     font-size : 1.2rem;
 }
 section {
     min-height: 50vh;
 }
+
 /* End global Rules  */
 
 /* 
@@ -189,17 +191,29 @@ section {
 }
 
 
-
 .content {
-    min-height: 87vh;
+    
+    padding: 1rem 2rem;
+    flex-grow: 1;
+    transition: margin-left 0.3s ease;
+    background: #f8f9fa;
+    min-height:100vh; /*calc(100vh-5rem);*/
 }
-
+    .content.fullwidth {
+        margin-left: 0;
+    }
 /* Footer */
 .footer {
     background-color: var(--main-color);
     color: white;
     text-align: center;
     padding: 1rem;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 999;
+}
 }
 
 

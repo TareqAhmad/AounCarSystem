@@ -61,6 +61,7 @@ namespace AounCarSystem.Controllers
             }
         }
 
+
         [HttpGet("/Expenses/Get_ExpenseById")]
         public IActionResult Get_ExpenseById(int expenseId)
         {
@@ -110,6 +111,7 @@ namespace AounCarSystem.Controllers
 
         }
 
+
         [HttpPost("/Expenses/AddExpense")]
         public IActionResult AddExpense(int ExpenseId, string ExpenseType, decimal ExpenseAmount, string ExpenseDate, string ExpenseDescription, int CarId)
         {
@@ -142,6 +144,7 @@ namespace AounCarSystem.Controllers
 
 
         }
+
 
         [HttpPost("Expenses/UpdateExpense")]
         public IActionResult UpdateExpense(int expensId, string ExpenseType, decimal ExpenseAmount, DateTime ExpenseDate, string ExpenseDescription)
@@ -176,6 +179,7 @@ namespace AounCarSystem.Controllers
 
 
         }
+        
 
         [HttpPost("/Expenses/DeleteExpense")]
         public IActionResult DeleteExpense(int expenseId)
@@ -204,5 +208,55 @@ namespace AounCarSystem.Controllers
 
 
         }
+
+
+        [HttpGet("/Expenses/Get_TotalExpenses")]
+        public IActionResult Get_TotalExpenses()
+        {
+            string connStr = _config.GetConnectionString("MySqlConn"); 
+
+            using(var conn = new MySqlConnection(connStr))
+            {
+                string sql = "SELECT IFNULL(SUM(amount),0) FROM expenses"; 
+
+                using (var cmd = new MySqlCommand(sql, conn))
+                {
+                    conn.Open();
+                    object SumExpenses = cmd.ExecuteScalar();
+                    decimal result = Convert.ToDecimal(SumExpenses);
+
+                    return Json(result);
+
+
+                }
+
+            }
+        }
+
+
+        [HttpGet("/Users/Get_NextExpenseId")]
+        public IActionResult Get_NextExpenseId()
+        {
+
+            string connStr = _config.GetConnectionString("MySqlconn");
+
+            using (var conn = new MySqlConnection(connStr))
+            {
+                string sql = @"SELECT IFNULL(MAX(Expense_Id),0) + 1  FROM Expenses";
+
+                using (var cmd = new MySqlCommand(sql, conn))
+                {
+                    conn.Open();
+                    object result = cmd.ExecuteScalar();
+                    int nextExpenseId = Convert.ToInt32(result);
+                    return Json(nextExpenseId);
+                }
+
+
+
+            }
+        }
+
+
     }
 }

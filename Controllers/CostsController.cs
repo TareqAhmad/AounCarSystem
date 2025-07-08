@@ -197,5 +197,56 @@ namespace AounCarSystem.Controllers
 
             }
         }
+
+
+        [HttpGet("/Costs/Get_TotalCosts")]
+        public IActionResult Get_TotalCosts()
+        {
+            string connStr = _config.GetConnectionString("MySqlConn");
+
+            using (var conn = new MySqlConnection(connStr))
+            {
+                string sql = "SELECT IFNULL(SUM(costValue),0) FROM costs";
+
+                using (var cmd = new MySqlCommand(sql, conn))
+                {
+                    conn.Open();
+                    object SumExpenses = cmd.ExecuteScalar();
+                    decimal result = Convert.ToDecimal(SumExpenses);
+
+                    return Json(result);
+
+
+                }
+
+            }
+        }
+
+
+        [HttpGet("/Users/Get_NextCostId")]
+        public IActionResult Get_NextCostId()
+        {
+
+            string connStr = _config.GetConnectionString("MySqlconn");
+
+            using (var conn = new MySqlConnection(connStr))
+            {
+                string sql = @"SELECT IFNULL(MAX(Cost_Id),0) + 1  FROM Costs";
+
+                using (var cmd = new MySqlCommand(sql, conn))
+                {
+                    conn.Open();
+                    object result = cmd.ExecuteScalar();
+                    int nextCostId = Convert.ToInt32(result);
+                    return Json(nextCostId);
+                }
+
+
+
+            }
+        }
+
+
+
     }
 }

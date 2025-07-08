@@ -15,6 +15,7 @@ namespace AounCarSystem.Controllers
                 _config = config;
         }
 
+
         [HttpGet("/Users/Get_AllUsers")]
         public IActionResult Get_AllUsers()
         {
@@ -52,6 +53,7 @@ namespace AounCarSystem.Controllers
 
            
         }
+
 
         [HttpGet("/Users/Get_UserById")]
         public IActionResult Get_UserById(int userId) {
@@ -95,6 +97,7 @@ namespace AounCarSystem.Controllers
 
         }
 
+
         [HttpPost("Users/AddUser")]
         public IActionResult AddUser(int UserId, string UserName, string Password, int Per_Id)
         {
@@ -124,6 +127,7 @@ namespace AounCarSystem.Controllers
 
 
         }
+
 
         [HttpPost("Users/UpdateUser")]
         public IActionResult UpdateUser(int UserId, string UserName, string Password)
@@ -155,6 +159,7 @@ namespace AounCarSystem.Controllers
 
         }
 
+
         [HttpPost("/Users/DeleteUser")]
         public IActionResult DeleteUser(int userId)
         {
@@ -179,6 +184,54 @@ namespace AounCarSystem.Controllers
                         return Json(new { success = false });
 
                 }
+
+            }
+        }
+
+
+        [HttpGet("/Users/Get_CountUsers")]
+        public IActionResult Get_CountUsers()
+        {
+
+            string connStr = _config.GetConnectionString("MySqlConn");
+
+            using (var conn = new MySqlConnection(connStr))
+            {
+                string sql = @"SELECT IFNULL(COUNT(*),0) FROM Users";
+
+                using (var cmd = new MySqlCommand(sql, conn))
+                {
+
+                    conn.Open();
+                    object Count = cmd.ExecuteScalar();
+                    int result = Convert.ToInt32(Count);
+                    return Json(result);
+                }
+
+            }
+        }
+
+
+
+        [HttpGet("/Users/Get_NextUsersId")]
+        public IActionResult Get_NextInvoiceId()
+        {
+
+            string connStr = _config.GetConnectionString("MySqlconn");
+
+            using (var conn = new MySqlConnection(connStr))
+            {
+                string sql = @"SELECT IFNULL(MAX(user_Id),0) + 1  FROM users";
+
+                using (var cmd = new MySqlCommand(sql, conn))
+                {
+                    conn.Open();
+                    object result = cmd.ExecuteScalar();
+                    int nextUserId = Convert.ToInt32(result);
+                    return Json(nextUserId);
+                }
+
+
 
             }
         }
