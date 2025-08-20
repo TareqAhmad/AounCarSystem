@@ -15,7 +15,7 @@ namespace AounCarSystem.Controllers
 
 
         [HttpGet("/UserPermissions/GetPermissionsToList")]
-        public IActionResult GetSupplierToList()
+        public IActionResult GetPermissionsToList()
         {
             var PermissionsList = new List<ClsUserPermissions>();
 
@@ -34,8 +34,8 @@ namespace AounCarSystem.Controllers
                         {
                             PermissionsList.Add(new ClsUserPermissions
                             {
-                                Per_Id = Convert.ToInt32(reader["Per_Id"]),
-                                PerGroup = reader["PerGroup"].ToString()
+                                Per_Id = reader.IsDBNull(0) ? 0 : reader.GetInt32(0),
+                                PerGroup =reader.IsDBNull(1) ? "" : reader.GetString(1)
                             });
                         }
                     }

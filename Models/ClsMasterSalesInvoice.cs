@@ -8,6 +8,8 @@
 
         public string Inv_Date { get; set; }
 
+        public string Payment_type { get; set; }
+
         public int Cust_Id { get; set; }
 
         public string CustomerName { get; set; }

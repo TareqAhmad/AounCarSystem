@@ -1,7 +1,9 @@
 ﻿using AounCarSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
+using MySqlX.XDevAPI.Common;
 using System.Diagnostics.Eventing.Reader;
+using System.Linq.Expressions;
 using System.Security.Cryptography;
 
 namespace AounCarSystem.Controllers
@@ -18,48 +20,59 @@ namespace AounCarSystem.Controllers
 
         }
 
+       
         [HttpGet("/Cars/Get_AllCars")]
         public IActionResult Get_AllCars()
         {
-            var Cars = new List<object>();
-            string connStr = _config.GetConnectionString("MySqlConn");
-
-            using (var conn = new MySqlConnection(connStr))
+            try
             {
 
-                string sql = @"SELECT c.ChassisNumber, c.CarName, c.CarType, c.CarModel, c.CarPrice, c.Status,
+                var Cars = new List<object>();
+                string connStr = _config.GetConnectionString("MySqlConn");
+
+                using (var conn = new MySqlConnection(connStr))
+                {
+
+                    string sql = @"SELECT c.ChassisNumber, c.CarName, c.CarType, c.CarModel, c.CarPrice, c.Status,
                                     s.CompanyName AS SupplierName
                              FROM Cars c
                              LEFT JOIN Suppliers s ON c.Supplier_Id = s.Supplier_Id";
 
 
-                using (var cmd = new MySqlCommand(sql, conn))
-                {
-
-                    conn.Open();
-                    var reader = cmd.ExecuteReader();
-
-                    while (reader.Read())
+                    using (var cmd = new MySqlCommand(sql, conn))
                     {
 
-                        Cars.Add(new
+                        conn.Open();
+                        var reader = cmd.ExecuteReader();
+
+                        while (reader.Read())
                         {
 
-                            ChassisNumber = reader["ChassisNumber"],
-                            CarName = reader["CarName"],
-                            CarType = reader["CarType"],
-                            CarModel = reader["CarModel"],
-                            CarPrice = reader["CarPrice"],
-                            Status = reader["Status"],
-                            SupplierName = reader["SupplierName"]
+                            Cars.Add(new
+                            {
 
-                        });
+                                ChassisNumber = reader.IsDBNull(0) ? 0 : reader.GetInt32(0),
+                                CarName = reader.IsDBNull(1) ? "" : reader.GetString(1),
+                                CarType = reader.IsDBNull(2) ? "" : reader.GetString(2),
+                                CarModel = reader.IsDBNull(3) ? "" : reader.GetString(3),
+                                CarPrice = reader.IsDBNull(4) ? 0 : reader.GetDecimal(4),
+                                Status = reader.IsDBNull(5) ? "" : reader.GetString(5),
+                                SupplierName = reader.IsDBNull(6) ? "" : reader.GetString(6)
+
+                            });
+                        }
+
                     }
-                    return Json(Cars);
+
+
                 }
-
-
+                return Json(Cars);
             }
+            catch(Exception ex) {
+
+                return Json(new { success = false, message = "Error: " + ex.Message });
+            }
+
 
         }
 
@@ -67,47 +80,55 @@ namespace AounCarSystem.Controllers
         [HttpGet("/Cars/Get_CarById")]
         public IActionResult Get_CarById(int ChassisNumber)
         {
-            var Car = new List<object>();
-            string connStr = _config.GetConnectionString("MySqlConn");
-
-            using (var conn = new MySqlConnection(connStr))
+            try
             {
+                var Car = new List<object>();
+                string connStr = _config.GetConnectionString("MySqlConn");
 
-                string sql = @"SELECT c.ChassisNumber, c.CarName, c.CarType, c.CarModel, c.CarPrice, c.Status,
+                using (var conn = new MySqlConnection(connStr))
+                {
+
+                    string sql = @"SELECT c.ChassisNumber, c.CarName, c.CarType, c.CarModel, c.CarPrice, c.Status,
                                     s.CompanyName AS SupplierName
                              FROM Cars c
                              LEFT JOIN Suppliers s ON c.Supplier_Id = s.Supplier_Id
                              WHERE c.ChassisNumber = @ChassisNumber";
 
 
-                using (var cmd = new MySqlCommand(sql, conn))
-                {
-
-                    cmd.Parameters.AddWithValue("@ChassisNumber", ChassisNumber);
-                    conn.Open();
-                    var reader = cmd.ExecuteReader();
-
-                    while (reader.Read())
+                    using (var cmd = new MySqlCommand(sql, conn))
                     {
 
-                        Car.Add(new
+                        cmd.Parameters.AddWithValue("@ChassisNumber", ChassisNumber);
+                        conn.Open();
+                        var reader = cmd.ExecuteReader();
+
+                        while (reader.Read())
                         {
 
-                            chassisNumber = reader["chassisNumber"],
-                            carName = reader["carName"],
-                            carType = reader["carType"],
-                            carModel = reader["carModel"],
-                            carPrice = reader["carPrice"],
-                            status = reader["status"],
-                            supplierName = reader["supplierName"]
+                            Car.Add(new
+                            {
+                                chassisNumber = reader.IsDBNull(0) ? 0 : reader.GetInt32(0),
+                                carName = reader.IsDBNull(1) ? "" : reader.GetString(1),
+                                carType = reader.IsDBNull(2) ? "" : reader.GetString(2),
+                                carModel = reader.IsDBNull(3) ? "" : reader.GetString(3),
+                                carPrice = reader.IsDBNull(4) ? 0 : reader.GetDecimal(4),
+                                Status = reader.IsDBNull(5) ? "" : reader.GetString(5),
+                                supplierName = reader.IsDBNull(6) ? "" : reader.GetString(6)
 
-                        });
+                            });
+                        }
+                        return Json(Car);
                     }
-                    return Json(Car);
+
+
                 }
-
-
             }
+
+            catch(Exception ex) {
+
+                return Json(new { success = false, message = "Error: " + ex.Message });
+            }
+            
 
         }
 
@@ -115,30 +136,40 @@ namespace AounCarSystem.Controllers
         [HttpPost("Cars/AddCar")]
         public IActionResult AddCar(int ChassisNumber, string CarName, string CarType, string CarModel, decimal CarPrice, string CarStatus, int SupplierId)
         {
-            string connStr = _config.GetConnectionString("MySqlConn");
-
-            using (var conn = new MySqlConnection(connStr))
+           try
             {
-                string sql = @"INSERT INTO Cars(ChassisNumber, CarName, CarType, CarModel, CarPrice, Status, Supplier_Id)
-                              VALUES(@ChassisNumber , @CarName, @CarType, @CarModel, @CarPrice, @Status,@SupplierId)";
+               
+                string connStr = _config.GetConnectionString("MySqlConn");
 
-                using (var cmd = new MySqlCommand(sql, conn))
-                {
-                    cmd.Parameters.AddWithValue("@ChassisNumber", ChassisNumber);
-                    cmd.Parameters.AddWithValue("@CarName", CarName);
-                    cmd.Parameters.AddWithValue("@CarType", CarType);
-                    cmd.Parameters.AddWithValue("@CarModel", CarModel);
-                    cmd.Parameters.AddWithValue("@CarPrice", CarPrice);
-                    cmd.Parameters.AddWithValue("@Status", CarStatus);
-                    cmd.Parameters.AddWithValue("@SupplierId", SupplierId);
+                    using (var conn = new MySqlConnection(connStr))
+                    {
+                        string sql = @"INSERT INTO Cars(ChassisNumber, CarName, CarType, CarModel, CarPrice, Status, Supplier_Id)
+                                      VALUES(@ChassisNumber , @CarName, @CarType, @CarModel, @CarPrice, @Status,@SupplierId)";
 
-                    conn.Open();
-                    int result = cmd.ExecuteNonQuery();
-                    return result > 0 ? Json(new { success = true }) : Json(new { success = false });
+                        using (var cmd = new MySqlCommand(sql, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@ChassisNumber", ChassisNumber);
+                            cmd.Parameters.AddWithValue("@CarName", CarName);
+                            cmd.Parameters.AddWithValue("@CarType", CarType);
+                            cmd.Parameters.AddWithValue("@CarModel", CarModel);
+                            cmd.Parameters.AddWithValue("@CarPrice", CarPrice);
+                            cmd.Parameters.AddWithValue("@Status", CarStatus);
+                            cmd.Parameters.AddWithValue("@SupplierId", SupplierId);
 
-                }
+                            conn.Open();
+                            int result = cmd.ExecuteNonQuery();
+                            return result > 0 ? Json(new { success = true }) : Json(new { success = false });
+
+                    }
 
 
+                    }
+               
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
             }
 
 
@@ -148,34 +179,42 @@ namespace AounCarSystem.Controllers
         [HttpPost("Cars/UpdateCar")]
         public IActionResult UpdateCar(int ChassisNumber,string CarName, string CarType, string CarModel,decimal CarPrice, string CarStatus)
         {
-            string connStr = _config.GetConnectionString("MySqlConn");
 
-            using (var conn = new MySqlConnection(connStr))
-            {
-                string sql = @"UPDATE Cars 
-                               SET carName = @CarName,
-                                   carType = @CarType,
-                                   carModel = @CarModel,
-                                   carPrice = @CarPrice,
-                                   status = @Status
-                              WHERE chassisNumber = @chassisNumber";
+          try
+           { 
+                string connStr = _config.GetConnectionString("MySqlConn");
 
-                using (var cmd = new MySqlCommand(sql, conn))
+                using (var conn = new MySqlConnection(connStr))
                 {
-                    cmd.Parameters.AddWithValue("@CarName", CarName);
-                    cmd.Parameters.AddWithValue("@CarType", CarType);
-                    cmd.Parameters.AddWithValue("@CarModel", CarModel);
-                    cmd.Parameters.AddWithValue("@CarPrice", CarPrice);
-                    cmd.Parameters.AddWithValue("@Status", CarStatus);
-                    cmd.Parameters.AddWithValue("@chassisNumber", ChassisNumber);
+                    string sql = @"UPDATE Cars 
+                                   SET carName = @CarName,
+                                       carType = @CarType,
+                                       carModel = @CarModel,
+                                       carPrice = @CarPrice,
+                                       status = @Status
+                                  WHERE chassisNumber = @chassisNumber";
 
-                    conn.Open();
-                    int result = cmd.ExecuteNonQuery();
-                    return result > 0 ? Json(new { success = true }) : Json(new { success = false }); 
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@CarName", CarName);
+                        cmd.Parameters.AddWithValue("@CarType", CarType);
+                        cmd.Parameters.AddWithValue("@CarModel", CarModel);
+                        cmd.Parameters.AddWithValue("@CarPrice", CarPrice);
+                        cmd.Parameters.AddWithValue("@Status", CarStatus);
+                        cmd.Parameters.AddWithValue("@chassisNumber", ChassisNumber);
+
+                        conn.Open();
+                        int result = cmd.ExecuteNonQuery();
+                        return result > 0 ? Json(new { success = true }) : Json(new { success = false });
+
+                    }
+
 
                 }
-
-
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
             }
 
 
@@ -185,28 +224,34 @@ namespace AounCarSystem.Controllers
         [HttpPost("/Cars/DeleteCar")]
         public IActionResult DeleteCar(int chassisNumber)
         {
-            string connStr = _config.GetConnectionString("MySqlConn");
-
-            using (var conn = new MySqlConnection(connStr))
+            try
             {
 
-                string sql = @"DELETE FROM Cars C  WHERE C.ChassisNumber = @ChassisNumber";
+                string connStr = _config.GetConnectionString("MySqlConn");
 
-                using (var cmd = new MySqlCommand(sql, conn))
+                using (var conn = new MySqlConnection(connStr))
                 {
 
-                    cmd.Parameters.AddWithValue("@ChassisNumber", chassisNumber);
+                    string sql = @"DELETE FROM Cars C  WHERE C.ChassisNumber = @ChassisNumber";
 
-                    conn.Open();
-                    int Result = cmd.ExecuteNonQuery();
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
 
-                    if (Result > 0)
-                        return Json(new { success = true });
-                    else
-                        return Json(new { success = false });
+                        cmd.Parameters.AddWithValue("@ChassisNumber", chassisNumber);
+
+                        conn.Open();
+                        int result = cmd.ExecuteNonQuery();
+                        return result >  0 ? Json(new { success = true }) :  Json(new { success = false });
+
+
+                     
+                    }
 
                 }
-
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
             }
         }
 
@@ -214,135 +259,172 @@ namespace AounCarSystem.Controllers
         [HttpGet("/Cars/GetCarToList")]
         public IActionResult GetCarToList()
         {
-            var CarsList = new List<object>();
 
-            string connStr = _config.GetConnectionString("MySqlConn");
-
-            using (var conn = new MySqlConnection(connStr))
+            try
             {
-                string sql = "SELECT ChassisNumber, CarName FROM Cars";
+                var CarsList = new List<object>();
 
-                using (var cmd = new MySqlCommand(sql, conn))
+                string connStr = _config.GetConnectionString("MySqlConn");
+
+                using (var conn = new MySqlConnection(connStr))
                 {
-                    conn.Open();
-                    using (var reader = cmd.ExecuteReader())
+                    string sql = "SELECT ChassisNumber, CarName FROM Cars";
+
+                    using (var cmd = new MySqlCommand(sql, conn))
                     {
-                        while (reader.Read())
+                        conn.Open();
+                        using (var reader = cmd.ExecuteReader())
                         {
-                            CarsList.Add(new
+                            while (reader.Read())
                             {
-                                chassisNumber = Convert.ToInt32(reader["ChassisNumber"]),
-                                carName = reader["CarName"].ToString()
-                            });
+                                CarsList.Add(new
+                                {
+                                    chassisNumber = reader.IsDBNull(0) ? 0 : reader.GetInt32(0),
+                                    carName = reader.IsDBNull(1) ? "" : reader.GetString(1)
+
+                                });
+                            }
                         }
                     }
                 }
-            }
 
-            return Json(CarsList);
+                return Json(CarsList);
+
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
+            }
         }
 
 
         [HttpGet("/Cars/Get_CarToList")]
         public IActionResult Get_CarToList(int CarId)
         {
-            var CarsList = new List<object>();
-
-            string connStr = _config.GetConnectionString("MySqlConn");
-
-            using (var conn = new MySqlConnection(connStr))
+            try
             {
-                string sql = "SELECT ChassisNumber, CarName FROM Cars WHERE ChassisNumber= @CarId";
+                var CarsList = new List<object>();
 
-                using (var cmd = new MySqlCommand(sql, conn))
+                string connStr = _config.GetConnectionString("MySqlConn");
+
+                using (var conn = new MySqlConnection(connStr))
                 {
-                    conn.Open();
+                    string sql = "SELECT ChassisNumber, CarName FROM Cars WHERE ChassisNumber= @CarId";
 
-                    cmd.Parameters.AddWithValue("@CarId", CarId); 
-
-                    using (var reader = cmd.ExecuteReader())
+                    using (var cmd = new MySqlCommand(sql, conn))
                     {
-                        while (reader.Read())
+                        conn.Open();
+
+                        cmd.Parameters.AddWithValue("@CarId", CarId);
+
+                        using (var reader = cmd.ExecuteReader())
                         {
-                            CarsList.Add(new
+                            while (reader.Read())
                             {
-                                chassisNumber = Convert.ToInt32(reader["ChassisNumber"]),
-                                carName = reader["CarName"].ToString()
-                            });
+                                CarsList.Add(new
+                                {
+
+
+                                    chassisNumber = reader.IsDBNull(0) ? 0 : reader.GetInt32(0),
+                                    carName = reader.IsDBNull(1) ? "" : reader.GetString(1)
+         
+                                });
+                            }
                         }
                     }
                 }
-            }
 
-            return Json(CarsList);
+                return Json(CarsList);
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
+            }
         }
 
 
         [HttpGet("/Cars/Get_CarInvoice")]
         public IActionResult Get_CarInvoice(int ChassisNumber)
         {
-            var Car = new List<object>();
-            string connStr = _config.GetConnectionString("MySqlConn");
 
-            using (var conn = new MySqlConnection(connStr))
+            try
             {
 
-                string sql = @"SELECT c.ChassisNumber, c.CarName, c.CarPrice
+                var Car = new List<object>();
+                string connStr = _config.GetConnectionString("MySqlConn");
+
+                using (var conn = new MySqlConnection(connStr))
+                {
+
+                    string sql = @"SELECT c.ChassisNumber, c.CarName, c.CarPrice
                              FROM Cars c
                              WHERE c.ChassisNumber = @ChassisNumber";
 
 
-                using (var cmd = new MySqlCommand(sql, conn))
-                {
-
-                    cmd.Parameters.AddWithValue("@ChassisNumber", ChassisNumber);
-                    conn.Open();
-                    var reader = cmd.ExecuteReader();
-
-                    while (reader.Read())
+                    using (var cmd = new MySqlCommand(sql, conn))
                     {
 
-                        Car.Add(new
+                        cmd.Parameters.AddWithValue("@ChassisNumber", ChassisNumber);
+                        conn.Open();
+                        var reader = cmd.ExecuteReader();
+
+                        while (reader.Read())
                         {
 
-                            chassisNumber = reader["chassisNumber"],
-                            carName = reader["carName"],
-                            carPrice = reader["carPrice"],
+                            Car.Add(new
+                            {
 
-                        });
+                                chassisNumber = reader.IsDBNull(0) ? 0 : reader.GetInt32(0),
+                                carName = reader.IsDBNull(1) ? "" : reader.GetString(1),
+                                CarPrice = reader.IsDBNull(2) ? 0 : reader.GetDecimal(2)
+
+
+                            });
+                        }
+                        return Json(Car);
                     }
-                    return Json(Car);
+
+
                 }
-
-
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
             }
 
         }
-
 
 
         [HttpGet("/Cars/Get_ReportCars")]
         public IActionResult Get_ReportCars(string condition)
         {
-          
-            string connStr = _config.GetConnectionString("MySqlConn"); 
-
-            using(var conn = new MySqlConnection(connStr))
+            try
             {
-                string sql = $@"SELECT COUNT(*) FROM Cars WHERE Status like '%{condition}%'";
-                
-                using(var cmd = new MySqlCommand(sql, conn))
+
+
+                string connStr = _config.GetConnectionString("MySqlConn");
+
+                using (var conn = new MySqlConnection(connStr))
                 {
+                    string sql = $@"SELECT COUNT(*) FROM Cars WHERE Status like '%{condition}%'";
 
-                    conn.Open();
-                    object Count = cmd.ExecuteScalar();
-                    int result = Convert.ToInt32(Count);
-                    return Json(result); 
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
+
+                        conn.Open();
+                        object Count = cmd.ExecuteScalar();
+                        int result = Convert.ToInt32(Count);
+                        return Json(result);
+                    }
+
                 }
-
             }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
+            }
+            
         }
-
 
 
 

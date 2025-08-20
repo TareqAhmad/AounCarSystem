@@ -1,6 +1,7 @@
 ﻿using AounCarSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
+using MySqlX.XDevAPI.Common;
 
 namespace AounCarSystem.Controllers
 {
@@ -17,50 +18,55 @@ namespace AounCarSystem.Controllers
         [HttpGet("/Suppliers/Get_AllSuppliers")]
         public IActionResult Get_AllSuppliers()
         {
-            var Suppliers = new List<object>();
-            string connStr = _config.GetConnectionString("MySqlConn");
-
-            using (var conn = new MySqlConnection(connStr))
+            try
             {
-                string sql = @"SELECT S.supplier_Id,S.CompanyName,S.Phone,S.Email,S.Address
-                               FROM Suppliers S";
-                
+                var Suppliers = new List<object>();
+                string connStr = _config.GetConnectionString("MySqlConn");
 
-                using (var cmd = new MySqlCommand(sql, conn))
+                using (var conn = new MySqlConnection(connStr))
                 {
+                    string sql = @"SELECT S.supplier_Id,S.CompanyName,S.Phone,S.Email,S.Address
+                               FROM Suppliers S";
 
-                    conn.Open();
-                    var reader = cmd.ExecuteReader();
+
+                    using (var cmd = new MySqlCommand(sql, conn))
                     {
-                        while (reader.Read())
+
+                        conn.Open();
+                        var reader = cmd.ExecuteReader();
                         {
-
-                            Suppliers.Add(new
+                            while (reader.Read())
                             {
-                                supplier_Id = reader["supplier_Id"],
-                                companyName = reader["companyName"],
-                                phone = reader["phone"],
-                                email = reader["email"],
-                                address = reader["address"],
 
-                            });
+                                Suppliers.Add(new
+                                {
+                                    supplier_Id = reader.IsDBNull(0) ? 0 : reader.GetInt32(0),
+                                    companyName = reader.IsDBNull(1) ? "" : reader.GetString(1),
+                                    phone =reader.IsDBNull(2) ? "" : reader.GetString(2),
+                                    email = reader.IsDBNull(3) ? "" : reader.GetString(3),
+                                    address = reader.IsDBNull(4) ? "" : reader.GetString(4),
+
+                                });
+                            }
+
+                            return Json(Suppliers);
+
                         }
-
-                        return Json(Suppliers);
 
                     }
 
+
+
+
+
+
+
                 }
-
-
-
-
-
-
-
             }
-
-
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
+            }
 
 
         }
@@ -69,46 +75,51 @@ namespace AounCarSystem.Controllers
         [HttpGet("/Suppliers/Get_SupplierById")]
         public IActionResult Get_SupplierById(int supplierId)
         {
-
-            var supplier = new List<Object>();
-
-            string connStr = _config.GetConnectionString("MySqlConn");
-
-            using (var conn = new MySqlConnection(connStr))
+            try
             {
-                
-                string sql = @"SELECT S.supplier_Id,S.CompanyName,S.Phone,S.Email,S.Address
+                var supplier = new List<Object>();
+
+                string connStr = _config.GetConnectionString("MySqlConn");
+
+                using (var conn = new MySqlConnection(connStr))
+                {
+
+                    string sql = @"SELECT S.supplier_Id,S.CompanyName,S.Phone,S.Email,S.Address
                                FROM Suppliers S
                                WHERE S.supplier_Id = @supplier";
 
 
-                using (var cmd = new MySqlCommand(sql, conn))
-                {
-                   
-                    cmd.Parameters.AddWithValue("@supplier", supplierId);
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
 
-                    conn.Open();
-                    var reader = cmd.ExecuteReader();
+                        cmd.Parameters.AddWithValue("@supplier", supplierId);
+
+                        conn.Open();
+                        var reader = cmd.ExecuteReader();
 
                         while (reader.Read())
                         {
 
                             supplier.Add(new
                             {
-                                supplier_Id = reader["supplier_Id"],
-                                companyName = reader["companyName"],
-                                phone = reader["phone"],
-                                email = reader["email"],
-                                address = reader["address"],
+                                supplier_Id = reader.IsDBNull(0) ? 0 : reader.GetInt32(0),
+                                companyName = reader.IsDBNull(1) ? "" : reader.GetString(1),
+                                phone = reader.IsDBNull(2) ? "" : reader.GetString(2),
+                                email = reader.IsDBNull(3) ? "" : reader.GetString(3),
+                                address = reader.IsDBNull(4) ? "" : reader.GetString(4),
 
                             });
                         }
-                   
+
                         return Json(supplier);
+                    }
+
                 }
-
             }
-
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
+            }
 
 
         }
@@ -117,28 +128,35 @@ namespace AounCarSystem.Controllers
         [HttpPost("Suppliers/AddSupplier")]
         public IActionResult AddSupplier(int SupplierId, string Suppliername, string Supplierphone, string Supplieremail, string Supplieraddress)
         {
-            string connStr = _config.GetConnectionString("MySqlConn");
-
-            using (var conn = new MySqlConnection(connStr))
+            try
             {
-                string sql = @"INSERT INTO Suppliers(supplier_Id, CompanyName, Phone, Email, Address)
+                string connStr = _config.GetConnectionString("MySqlConn");
+
+                using (var conn = new MySqlConnection(connStr))
+                {
+                    string sql = @"INSERT INTO Suppliers(supplier_Id, CompanyName, Phone, Email, Address)
                         VALUES(@SupplierId , @Suppliername, @Supplierphone, @Supplieremail, @Supplieraddress)";
 
-                using (var cmd = new MySqlCommand(sql, conn))
-                {
-                    cmd.Parameters.AddWithValue("@SupplierId", SupplierId);
-                    cmd.Parameters.AddWithValue("@Suppliername", Suppliername);
-                    cmd.Parameters.AddWithValue("@Supplierphone", Supplierphone);
-                    cmd.Parameters.AddWithValue("@Supplieremail", Supplieremail);
-                    cmd.Parameters.AddWithValue("@Supplieraddress", Supplieraddress);
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@SupplierId", SupplierId);
+                        cmd.Parameters.AddWithValue("@Suppliername", Suppliername);
+                        cmd.Parameters.AddWithValue("@Supplierphone", Supplierphone);
+                        cmd.Parameters.AddWithValue("@Supplieremail", Supplieremail);
+                        cmd.Parameters.AddWithValue("@Supplieraddress", Supplieraddress);
 
-                    conn.Open();
-                    int result = cmd.ExecuteNonQuery();
-                    return result > 0 ? Json(new { success = true }) : Json(new { success = false });
+                        conn.Open();
+                        int result = cmd.ExecuteNonQuery();
+                        return result > 0 ? Json(new { success = true }) : Json(new { success = false });
+
+                    }
+
 
                 }
-
-
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
             }
 
 
@@ -148,32 +166,39 @@ namespace AounCarSystem.Controllers
         [HttpPost("Suppliers/UpdateSupplier")]
         public IActionResult UpdateCustomer(int SupplierId, string CompanyName, string Phone, string Email, string Address, string CustNationalId)
         {
-            string connStr = _config.GetConnectionString("MySqlConn");
-
-            using (var conn = new MySqlConnection(connStr))
+            try
             {
-                string sql = @"UPDATE Suppliers 
+                string connStr = _config.GetConnectionString("MySqlConn");
+
+                using (var conn = new MySqlConnection(connStr))
+                {
+                    string sql = @"UPDATE Suppliers 
                                 SET companyName = @CompanyName,
                                    Phone = @Phone,
                                    Email = @Email,
                                    Address = @Address
                                WHERE supplier_Id = @SupplierId";
 
-                using (var cmd = new MySqlCommand(sql, conn))
-                {
-                    cmd.Parameters.AddWithValue("@CompanyName", CompanyName);
-                    cmd.Parameters.AddWithValue("@Phone", Phone);
-                    cmd.Parameters.AddWithValue("@Email", Email);
-                    cmd.Parameters.AddWithValue("@Address", Address);
-                    cmd.Parameters.AddWithValue("@SupplierId", SupplierId);
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@CompanyName", CompanyName);
+                        cmd.Parameters.AddWithValue("@Phone", Phone);
+                        cmd.Parameters.AddWithValue("@Email", Email);
+                        cmd.Parameters.AddWithValue("@Address", Address);
+                        cmd.Parameters.AddWithValue("@SupplierId", SupplierId);
 
-                    conn.Open();
-                    int result = cmd.ExecuteNonQuery();
-                    return result > 0 ? Json(new { success = true }) : Json(new { success = false });
+                        conn.Open();
+                        int result = cmd.ExecuteNonQuery();
+                        return result > 0 ? Json(new { success = true }) : Json(new { success = false });
+
+                    }
+
 
                 }
-
-
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
             }
 
 
@@ -183,28 +208,31 @@ namespace AounCarSystem.Controllers
         [HttpPost("/Suppliers/DeleteSupplier")]
         public IActionResult DeleteSupplier(int supplierId)
         {
-            string connStr = _config.GetConnectionString("MySqlConn");
-
-            using (var conn = new MySqlConnection(connStr))
+            try
             {
+                string connStr = _config.GetConnectionString("MySqlConn");
 
-                string sql = @"DELETE FROM Suppliers S  WHERE S.supplier_Id = @supplierId";
-
-                using (var cmd = new MySqlCommand(sql, conn))
+                using (var conn = new MySqlConnection(connStr))
                 {
 
-                    cmd.Parameters.AddWithValue("@supplierId", supplierId);
+                    string sql = @"DELETE FROM Suppliers S  WHERE S.supplier_Id = @supplierId";
 
-                    conn.Open();
-                    int Result = cmd.ExecuteNonQuery();
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
 
-                    if (Result > 0)
-                        return Json(new { success = true });
-                    else
-                        return Json(new { success = false });
+                        cmd.Parameters.AddWithValue("@supplierId", supplierId);
+
+                        conn.Open();
+                        int result = cmd.ExecuteNonQuery();
+                        return result > 0 ? Json(new { success = true }) : Json(new { success = false });
+
+                    }
 
                 }
-
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
             }
         }
 
@@ -212,55 +240,69 @@ namespace AounCarSystem.Controllers
         [HttpGet("/Suppliers/GetSupplierToList")]
         public IActionResult GetSupplierToList()
         {
-            var suppliersList = new List<object>();
-
-            string connStr = _config.GetConnectionString("MySqlConn");
-
-            using (var conn = new MySqlConnection(connStr))
+            try
             {
-                string sql = "SELECT Supplier_Id, CompanyName FROM Suppliers";
-             
-                using (var cmd = new MySqlCommand(sql, conn))
+                var suppliersList = new List<object>();
+
+                string connStr = _config.GetConnectionString("MySqlConn");
+
+                using (var conn = new MySqlConnection(connStr))
                 {
-                    conn.Open();
-                    using (var reader = cmd.ExecuteReader())
+                    string sql = "SELECT Supplier_Id, CompanyName FROM Suppliers";
+
+                    using (var cmd = new MySqlCommand(sql, conn))
                     {
-                        while (reader.Read())
+                        conn.Open();
+                        using (var reader = cmd.ExecuteReader())
                         {
-                            suppliersList.Add(new 
+                            while (reader.Read())
                             {
-                                supplier_Id = Convert.ToInt32(reader["supplier_Id"]),
-                                companyName = reader["companyName"].ToString()
-                            });
+                                suppliersList.Add(new
+                                {
+                                    supplier_Id = reader.IsDBNull(0) ? 0 : reader.GetInt32(0),
+                                    companyName = reader.IsDBNull(1) ? "" : reader.GetString(1)
+           
+                                });
+                            }
                         }
                     }
                 }
-            }
 
-            return Json(suppliersList);
+                return Json(suppliersList);
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
+            }
         }
 
 
-        [HttpGet("/Users/Get_NextSupplierId")]
+        [HttpGet("/Suppliers/Get_NextSupplierId")]
         public IActionResult Get_NextSupplierId()
         {
-
-            string connStr = _config.GetConnectionString("MySqlconn");
-
-            using (var conn = new MySqlConnection(connStr))
+            try
             {
-                string sql = @"SELECT IFNULL(MAX(supplier_Id),0) + 1  FROM Suppliers";
+                string connStr = _config.GetConnectionString("MySqlconn");
 
-                using (var cmd = new MySqlCommand(sql, conn))
+                using (var conn = new MySqlConnection(connStr))
                 {
-                    conn.Open();
-                    object result = cmd.ExecuteScalar();
-                    int nextSupplierId = Convert.ToInt32(result);
-                    return Json(nextSupplierId);
+                    string sql = @"SELECT IFNULL(MAX(supplier_Id),0) + 1  FROM Suppliers";
+
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
+                        conn.Open();
+                        object result = cmd.ExecuteScalar();
+                        int nextSupplierId = Convert.ToInt32(result);
+                        return Json(new { nextSupplierId });
+                    }
+
+
+
                 }
-
-
-
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
             }
         }
 

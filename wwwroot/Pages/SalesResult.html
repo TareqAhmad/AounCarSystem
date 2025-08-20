@@ -21,47 +21,17 @@
 <body>
     <!-- Header with Top Navigation -->
     <header class="header">
-        <div class="logo fs-4">🌐 Aoun_CarSystem</div>
+        <div class="logo fs-4"><a href="/Pages/Dashboard.html" class="text-white text-decoration-none">🌐 Aoun_CarSystem</a></div>
         <nav class="nav" id="nav-bar">
             <a href="/Pages/Dashboard.html" class="fw-bold fs-4 bg-warning text-black p-1">dashboard </a>
-            <div class="dropdown">
-                <a href="#">Cars ▾</a>
-                <div class="dropdown-content">
-                    <a href="/Pages/Cars.html">Cars</a>
-                    <a href="/Pages/CarMovements.html">Car Movements</a>
-                    <a href="/Pages/CarAttachments.html">Car Attachments</a>
-                </div>
-            </div>
-            <div class="dropdown">
-                <a href="#">Person ▾</a>
-                <div class="dropdown-content">
-                    <a href="/Pages/Users.html">Users</a>
-                    <a href="/Pages/Customers.html">Customers</a>
-                    <a href="/Pages/Suppliers.html">Suppliers</a>
-                </div>
-            </div>
-            <a href="#">Sales</a>
-            <div class="dropdown">
-                <a href="#">Payments ▾</a>
-                <div class="dropdown-content">
-                    <a href="/Pages/Expenses.html">Expenses</a>
-                    <a href="/Pages/Costs.html">Costs</a>
-                </div>
-            </div>
-            <a href="/Pages/Store.html">store</a>
-            <a href="#">Reports</a>
-            <!-- <a href="#">Settings</a> -->
-            <a href="../index.html">Logout</a>
         </nav>
-        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
     </header>
-   
+
     <!-- Main Content -->
     <main class="container mt-5 vh-100">
 
         <div class="d-flex justify-content-between align-content-around">
             <h2>Sales List</h2>
-            <button id="btn-addInvoice" class="btn btn-sm btn-success fs-3 w-15">Add</button>
         </div>
 
         <!-- Master Invoice -->
@@ -294,25 +264,8 @@
     <!-- Link to jquery -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-
-
     <!--Main JS -->
     <script src="/Assets/JS/main.js"></script>
-
-    <script>
-        $(document).ready(function () {
-
-            const permission = parseInt(localStorage.getItem("permission")); 
-
-            if (permission === 2) {
-                $("#nav-bar").addClass("none");
-            }
-
-            console.log(permission);
-
-        });
-    </script>
-
 
 </body>
 </html>

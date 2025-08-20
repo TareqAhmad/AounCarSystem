@@ -23,7 +23,7 @@
     <header class="header">
         <div class="logo fs-4">🌐 Aoun_CarSystem</div>
         <nav class="nav" id="nav">
-            <a href="/Pages/Dashboard.html">dashboard </a>
+            <a href="/Pages/Dashboard.html" class="fw-bold fs-4 bg-warning text-black p-1">dashboard </a>
             <div class="dropdown">
                 <a href="#">Cars ▾</a>
                 <div class="dropdown-content">
@@ -74,6 +74,21 @@
                 </tr>
             </thead>
             <tbody id="user-table-body"></tbody>
+            <tfoot class="table-light">
+                <tr>
+                    <td colspan="5" class="text-end">
+                        <label for="User-recordCountSelect" class="me-2 fw-bold">Show:</label>
+                        <select id="User-recordCountSelect" class="form-select d-inline-block w-auto fs-4">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                            <option value="All">All</option>
+                        </select>
+                        <span class="fw-bold ms-2">records</span>
+                    </td>
+                </tr>
+            </tfoot>
         </table>
 
 

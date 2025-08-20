@@ -1,16 +1,16 @@
 ﻿
-/**
+/********************************
  * Dealing With Login 
- */
+ ********************************/
+
+
+
 $(document).ready(function () {
 
     $("#btnlogin").click(function () {
 
         const username = $("#username").val();
         const password = $("#password").val();
-
-        console.log(username);
-        console.log(password);
 
         $.ajax({
             type: 'POST',
@@ -21,8 +21,12 @@ $(document).ready(function () {
             },
             success: function (response) {
                 if (response.success) {
-                   //  Call_FunctionsDashboard(); 
-                    window.location.href = "/Pages/Dashboardh.html";
+                    const permission = response.permission; 
+
+                    // Store it for use on other pages
+                    localStorage.setItem("permission", permission);
+
+                    window.location.href = "/Pages/Dashboard.html";
                 } else {
                     $("#message").text("اسم المستخدم او كلمة السر غير صحيحة").css("color", "red");
                 }
@@ -34,12 +38,47 @@ $(document).ready(function () {
     }); 
 }); 
 
+$(document).ready(function () {
 
-/**
+    const permission = parseInt(localStorage.getItem("permission"));
+ 
+
+    if (permission === 1) {
+        $("#nav-bar").removeClass("none");
+        $("#toggle").removeClass("none");
+       
+    } else {
+        console.log(permission)
+        const btnLogout = ` <a href="../index.html"  class="btn btn-outline-light ms-3 fs-3">Logout</a>`; 
+        $(".header").append(btnLogout)
+        $("#nav-bar").addClass("none");
+        $("#toggle").addClass("none");
+    }
+
+
+
+});
+
+// عند الدخول إلى أي صفحة محمية مثل dashboard.html
+$(document).ready(function () {
+    const permission = localStorage.getItem("permission");
+    if (!permission) {
+        window.location.replace("../index.html"); // رجوع للصفحة الرئيسية
+    }
+
+    // منع الرجوع بزر back
+    history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+        history.go(1); // المستخدم يرجع لنفس الصفحة
+    };
+});
+
+
+ /*******************************
  *  Header Menu
- */
+ ********************************/
 function toggleMenu() {
-    document.getElementById('nav').classList.toggle('active');
+    document.getElementById('nav-bar').classList.toggle('active');
 }
 
 // Handle dropdowns in mobile
@@ -58,24 +97,151 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-/**
+/*******************************
+ * Dealing With Dashboard 
  * 
- *  Dashboard 
- * 
- */
+ ******************************/
 
-function Call_FunctionsDashboard() {
-    
-    Get_AvailabeCars(); 
+$(document).ready(function () {
 
-    Get_SoldCars(); 
+  
+   
 
-    Get_InMaintenanceCars(); 
+    $("#recordCountSelect").change(function () {
 
-    console.log("hello");
+        const selected = $(this).val();
+
+        const $rows = $("#table-dashboard").children("tr");
+
+        $rows.hide();
+
+        if (selected === 'All') {
+            $rows.show();
+        }
+        else {
+            const count = parseInt(selected);
+            $rows.slice(0, count).show();
+        }
+
+    });
+
+ 
+    loadInfoCars(); 
+
+});
+
+function loadInfoCars() {
+
+    $.ajax({
+        type: 'GET',
+        url: '/Home/Get_infocars',
+        success: function (Cars) {
+            $("#table-dashboard").empty(); 
+            $.each(Cars,function (i, Car) {
+
+                $("#table-dashboard").append(`
+                   
+                      <tr>
+                          <td>${Car.chassisNumber}</td>
+                          <td>${Car.carName}</td>
+                          <td>${Car.status}</td>
+                          <td>${Car.carPrice}</td>
+                          <td><button class='btn btn-warning fs-4' onclick="detailsCosts('${Car.chassisNumber}', '${Car.carName}','${Car.sumCosts}')">${Car.sumCosts}</button></td>
+                          <td>${Car.profit}</td>
+                          </tr>
+                `)
+
+            });
+            $("#recordCountSelect").val("5").trigger("change");
+            $("#recordCountSelect").val("5").trigger("change");
+        },
+        error: function () {
+
+        }
+
+    });
+
+
 
 }
 
+function detailsExpenses(chassisNumber, carName, sumExpenses) {
+
+    if (sumExpenses == 0) {
+        return;
+    }
+
+    $.ajax({
+        type: 'GET',
+        url: '/Home/Get_ExpensesCar',
+        data: { ChassisNumber: chassisNumber },
+        success: function (Expenses) {
+
+            $("#ExpensesCarName").text(carName); 
+
+            $("#dash-detailsExpenses").empty(); 
+            $.each(Expenses, function (i, Expense) {
+
+                $("#dash-detailsExpenses").append(`
+
+                   <tr>
+                      <td>${Expense.expenseId}</td>
+                      <td>${Expense.expenseType}</td>
+                      <td>${Expense.amount}</td>
+                      <td>${Expense.expenseDate}</td>
+                      <td>${Expense.description}</td>
+                   </tr>
+                `)
+
+            });
+
+
+            // Show modal
+            $("#detailsExpenseModal").modal("show");
+        },
+        error: function (response) {
+
+        }
+    });
+
+}
+
+function detailsCosts(chassisNumber,carName,sumCosts) {
+
+    if (sumCosts == 0) {
+        return;
+    }
+    $.ajax({
+        type: 'GET',
+        url: '/Home/Get_CostsCar',
+        data: { ChassisNumber: chassisNumber },
+        success: function (Costs) {
+
+            // Populate form fields
+            $("#CostsCarName").text(carName)
+
+            $("#dash-detailsCosts").empty();
+            $.each(Costs, function (i, cost) {
+
+                $("#dash-detailsCosts").append(`
+                    <tr>
+                       <td>${cost.costId}</td>
+                       <td>${cost.costName}</td>
+                       <td>${cost.costValue}</td>
+                    </tr>
+            `)
+                // Show modal
+                $("#detailsCostsModal").modal("show");
+            });
+
+
+        },
+
+        error: function (response) {
+
+        }
+    });
+}
 
 function Get_AvailabeCars() {
 
@@ -91,7 +257,6 @@ function Get_AvailabeCars() {
 
     });
 }
-
 
 function Get_CountUsers() {
 
@@ -137,6 +302,20 @@ function Get_InMaintenanceCars() {
     });
 }
 
+function Get_TotalSales() {
+
+    $.ajax({
+        type: 'GET',
+        url: '/Sales/Get_TotalSales',
+        success: function (response) {
+            $("#totalSales").text(response);
+
+        },
+        error: function () { }
+
+    });
+}
+
 function Get_TotalExpenses() {
 
     $.ajax({
@@ -150,6 +329,7 @@ function Get_TotalExpenses() {
 
     }); 
 }
+
 function Get_TotalCosts() {
 
     $.ajax({
@@ -165,45 +345,103 @@ function Get_TotalCosts() {
     }); 
 }
 
-    /**
-     *  Dealing With Cars 
-     */
+$(document).ready(function () {
+
+    $("#totalSales").off().on("click", function () {
+
+        const permission = parseInt(localStorage.getItem("permission"));
+
+        if (permission === 2) {
+          
+            window.location.href = "/Pages/SalesResult.html";
+      
+        }
+
+
+    });
+
+}); 
+
+
+
+
+
+
+    /*******************************
+     * Dealing With Cars 
+     *******************************/
+
+let allCars = [];
+let currentPage = 1;
+const rowsPerPage = 10;
+
+function renderTable() {
+    const start = (currentPage - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    const pageCars = allCars.slice(start, end);
+
+    const tbody = $('#car-table-body');
+    tbody.empty();
+
+    pageCars.forEach(car => {
+        tbody.append(`
+      <tr>
+        <td>${car.chassisNumber}</td>
+        <td>${car.carName}</td>
+        <td>${car.carType}</td>
+        <td>${car.carModel}</td>
+        <td>${car.carPrice}</td>
+        <td>${car.status}</td>
+        <td>${car.supplierName}</td>
+        <td>
+          <button class="btn  btn-primary" onclick="Get_CarById(${car.chassisNumber})">Update</button>
+          <button class="btn  btn-danger" onclick="DeleteCar(${car.chassisNumber}, '${car.carName}')">Delete</button>
+        </td>
+      </tr>
+    `);
+    });
+}
+function renderPaginationTabs() {
+    const pageCount = Math.ceil(allCars.length / rowsPerPage);
+    const tabList = $('#pagination-tabs');
+    tabList.empty();
+
+    for (let i = 1; i <= pageCount; i++) {
+        const active = i === currentPage ? 'active' : '';
+        tabList.append(`
+      <li class="nav-item">
+        <a class="btn btn-primary me-1 ${active}" href="#" onclick="goToPage(${i})">Page ${i}</a>
+      </li>
+    `);
+    }
+}
+
+function goToPage(page) {
+    currentPage = page;
+    renderTable();
+    renderPaginationTabs();
+}
 
 $(document).ready(function () {
     loadCars();
 }); 
 function loadCars() {
+
     $.ajax({
         type: 'Get',
         url: '/Cars/Get_AllCars',
         success: function (Cars) {
-            $('#car-table-body').empty(); 
-            $.each(Cars, function (i, Car) {
-
-                $('#car-table-body').append(`         
-                
-                <tr>
-                        <td>${Car.chassisNumber}</td>
-                        <td>${Car.carName}</td>
-                        <td>${Car.carType}</td>
-                        <td>${Car.carModel}</td>
-                        <td>${Car.carPrice}</td>
-                        <td>${Car.status}</td>
-                        <td>${Car.supplierName}</td>
-                        <td>
-                            <button class ="btn btn-sm btn-primary fs-5" onclick="Get_CarById(${Car.chassisNumber})">Update</button>
-                            <button class ="btn btn-sm btn-danger fs-5" onclick = "DeleteCar(${Car.chassisNumber},'${Car.carName}')">Delete</button>
-                        </td>
-
-                </tr>`);
-            });
+            allCars = Cars;
+            currentPage = 1;
+            renderTable();
+            renderPaginationTabs();
 
         },
         error: function () {
             alert('Failed to laod Cars'); 
         }
     });
-    }
+}
 
 function Get_CarById(ChassisNumber) {
             
@@ -221,7 +459,7 @@ function Get_CarById(ChassisNumber) {
                 $("#CarType").val(Car.carType);
                 $("#CarModel").val(Car.carModel);
                 $("#CarPrice").val(Car.carPrice);
-                $("#CarStatus").val(Car.status);
+                $("#edit-CarStatus").val(Car.status);
                 $("#CarSupplier").val(Car.supplierName);
 
                 $('#editCarModal').modal('show'); 
@@ -235,8 +473,10 @@ function Get_CarById(ChassisNumber) {
     }
 
 $("#btn-addCar").on("click", function () {
+
     $("#addCarModal").modal("show"); 
-    //get Data Supplier 
+
+    //Get Data Supplier
     $.ajax({
         type: 'GET',
         url: '/Suppliers/GetSupplierToList/',
@@ -251,7 +491,7 @@ $("#btn-addCar").on("click", function () {
             alert("Failed to load suppliers.");
         }
     });
-    //
+  
 });
 
 $("#AddCar").off().on("click", function () {
@@ -306,7 +546,7 @@ $("#editCar").off().on("click", function () {
     const carType = $("#CarType").val();
     const carModel = $("#CarModel").val();
     const carPrice = $("#CarPrice").val();
-    const carStatus = $("#CarStatus").val();
+    const carStatus = $("#edit-CarStatus").val();
 
     // $("#CarSupplier").val(Car.supplierName);
 
@@ -328,7 +568,7 @@ $("#editCar").off().on("click", function () {
                 $("#EditMessage").text("Car Updated successfully!").show();
                 setTimeout(() => {
                     $("#editCarModal").modal("hide");
-                     location.reload();
+                 //    location.reload();
                 }, 1000);
             } else {
                 $("#EditMessage").text("Update failed!").show();
@@ -385,9 +625,9 @@ function DeleteCar(ChassisNumber, CarName) {
 
 
 
-/**
+/*******************************
  *  Dealing With Users
- */
+ *******************************/
 
 $(document).ready(function () {
    LoadUsers();
@@ -432,7 +672,8 @@ function LoadUsers() {
 };
 
 function Get_UserById(user_Id) {
-    console.log(user_Id);
+
+
     $.ajax({
         type: 'GET',
         url: '/Users/Get_UserById',
@@ -454,9 +695,20 @@ function Get_UserById(user_Id) {
 
 $("#btn-AddUser").on("click", function () {
 
-    $("#addUserModal").modal("show");
 
-    //get Data Supplier 
+    // Get next userId
+    $.ajax({
+        type: 'GET',
+        url: '/Users/Get_NextUserId',
+        success: function (response) {
+            $("#add-userId").val(response.nextUserId)
+        },
+        error: function () {
+            alert("Failed to Get userId.");
+        }
+    });
+
+    //Get Data Permissions 
     $.ajax({
         type: 'GET',
         url: '/UserPermissions/GetPermissionsToList/',
@@ -471,7 +723,9 @@ $("#btn-AddUser").on("click", function () {
             alert("Failed to load Permissions.");
         }
     });
-    //
+
+    $("#addUserModal").modal("show");
+
 });
 
 $("#AddUser").off().on("click", function () {
@@ -584,9 +838,9 @@ function DeleteUser(UserId, UserName) {
 };
 
 
-/**
+/****************************
  * Dealing With Customers  
- */
+ ****************************/
 
 $(document).ready(function () {
     LoadCustomers();
@@ -644,10 +898,10 @@ function Get_CusteomerById(Cust_Id) {
 
             $("#CustId").val(Cust.custId);
             $("#CustName").val(Cust.fullName);
-            $("#CustPhone").val(Cust.custPhone);
-            $("#CustEmail").val(Cust.custEmail);
-            $("#CustAddress").val(Cust.custAddress);
-            $("#CustNationalId").val(Cust.custNationalID);
+            $("#CustPhone").val(Cust.phone);
+            $("#CustEmail").val(Cust.email);
+            $("#CustAddress").val(Cust.address);
+            $("#CustNationalId").val(Cust.nationalID);
          
 
             $("#editCustModal").modal("show");
@@ -660,6 +914,19 @@ function Get_CusteomerById(Cust_Id) {
 }
 
 $("#btn-addCustomer").on("click", function () {
+
+    // Get next custId
+    $.ajax({
+        type: 'GET',
+        url: '/Customers/Get_NextCustId',
+        success: function (response) {
+            $("#add-custId").val(response.nextCustId);
+        },
+        error: function () {
+            alert("Failed to Get CustomerId.");
+        }
+    });
+
     $("#addCustomerModal").modal("show");
 });
 
@@ -783,11 +1050,9 @@ function DeleteCustomer(CustId, CustomerName) {
 };
 
 
-
-
-/**
+/******************************
  *  Dealing With Suppliers
- */
+ ******************************/
 
 $(document).ready(function () {
     LoadSuppliers();
@@ -850,6 +1115,19 @@ function Get_SupplierById(supplier_Id) {
 }
 
 $("#btn-addSupplier").on("click", function () {
+
+    // Get next custId
+    $.ajax({
+        type: 'GET',
+        url: '/Suppliers/Get_NextSupplierId',
+        success: function (response) {
+            $("#add-supplierId").val(response.nextSupplierId)
+        },
+        error: function () {
+            alert("Failed to Get CustomerId.");
+        }
+    });
+
     $("#addSupplierModal").modal("show");
 });
 
@@ -935,7 +1213,6 @@ $("#editSupplier").off().on("click", function () {
 
 
 });
-
 function DeleteSupplier(supplier_Id, SupplierName) {
 
     $("#infoSupplier").text(supplier_Id + " " + SupplierName); 
@@ -970,9 +1247,9 @@ function DeleteSupplier(supplier_Id, SupplierName) {
 
 }
 
-/**
+/*****************************
  *   Dealing With Sales
- */
+ *****************************/
 
 $(document).ready(function () {
     LoadMasterInvoices(); 
@@ -987,18 +1264,29 @@ function LoadMasterInvoices()
             $("#MasterInvoice-table-body").empty(); 
             $.each(Masters, function (i, master) {
 
+                const currentPage = window.location.pathname;
+                let deleteButton = "";
+
+
+                if (currentPage.includes("Sales.html")) {
+                    deleteButton = `<button class="btn btn-sm btn-danger fs-5 " onclick="DeleteInvoice(${master.inv_Id})">Delete</button>`;
+                }
+
+
                 $("#MasterInvoice-table-body").append(`
                    <tr>
                         <td>${master.inv_Id}</td>
                         <td>${master.inv_Value}</td>
-                        <td>${new Date(master.inv_date).toLocaleDateString("en-GB")}</td>
+                        <td>${master.inv_date}</td>
+                        <td>${master.payment_type}</td>
                         <td>${master.fullName}</td>
                         <td>
                           <button class="btn btn-sm btn-success btn-view fs-5" onclick="ViewDetails(${master.inv_Id})">View Detials</button>
                           <!--
                           <button class="btn btn-sm btn-primary fs-5" onclick="Get_InvoiceById(${master.inv_Id})">Update</button>
+                          <button class="btn btn-sm btn-danger fs-5" onclick="DeleteInvoice(${master.inv_Id})" id="delete-sales">Delete</button>
                           -->
-                          <button class="btn btn-sm btn-danger fs-5" onclick="DeleteInvoice(${master.inv_Id})">Delete</button>
+                          ${deleteButton}
                         </td>
                    </tr>
                 `);
@@ -1014,9 +1302,11 @@ function LoadMasterInvoices()
 
 }
 
+
+
 function ViewDetails(Inv_id)
     {
-    console.log(Inv_id);
+ 
     $.ajax({
         type: 'GET',
         url: '/Sales/Get_DetailsInvoice',
@@ -1130,8 +1420,9 @@ $("#btn-addInvoice").on("click", function () {
         success: function (Customers) {
             const $dropdown = $("#addInvoice-custName");
             $dropdown.empty().append(`<option>--Select Customer --</option>`);
+
             $.each(Customers, function (i, cust) {
-                $dropdown.append(`<option value="${cust.custId}">${cust.fullName}</option>`);
+                $dropdown.append(`<option value="${cust.cust_Id}">${cust.fullName}</option>`);
             });
 
 
@@ -1222,6 +1513,7 @@ $("#addInvoice").off().on("click", function () {
         invId: $("#invId").val(),
         invDate: invDate,
         invValue: $("#invValue").val(),
+        paymentType: $("#paymentType").val(),
         CustId: $("#addInvoice-custName").val(),
         detailCount: 0 // we'll update this below
     };
@@ -1339,9 +1631,9 @@ function DeleteInvoice(Inv_Id) {
 
 }
 
-/**
+/****************************
  *  Dealing With Expenses
- */
+ ****************************/
 
 $(document).ready(function () {
     LoadExpenses();
@@ -1412,23 +1704,37 @@ function Get_ExpenseById(expense_Id) {
 }
 
 $("#btn-addExpense").on("click", function () {
-    $("#addExpenseModal").modal("show");
+  
+ 
+        // Get next expensesId
+        $.ajax({
+            type: 'GET',
+            url: '/Expenses/Get_NextExpenseId',
+            success: function (response) {
+                $("#add-expenseId").val(response.nextExpenseId)
+            },
+            error: function () {
+                alert("Failed to load Permissions.");
+            }
+        }); 
 
-    //get Data Car
-    $.ajax({
-        type: 'GET',
-        url: '/Cars/GetCarToList/',
-        success: function (data) {
-            const $dropdown = $("#add-carId");
-            $dropdown.empty().append(`<option>--Select Car--</option>`);
-            $.each(data, function (i, car) {
-                $dropdown.append(`<option value="${car.chassisNumber}">${car.carName}</option>`);
-            });
-        },
-        error: function () {
-            alert("Failed to load suppliers.");
-        }
-    });
+        //Get Data Car
+        $.ajax({
+            type: 'GET',
+            url: '/Cars/GetCarToList/',
+            success: function (data) {
+                const $dropdown = $("#add-carId");
+                $dropdown.empty().append(`<option>--Select Car--</option>`);
+                $.each(data, function (i, car) {
+                    $dropdown.append(`<option value="${car.chassisNumber}">${car.carName}</option>`);
+                });
+            },
+            error: function () {
+                alert("Failed to load suppliers.");
+            }
+        });
+
+        $("#addExpenseModal").modal("show");
 
 });
 
@@ -1553,9 +1859,9 @@ function DeleteExpense(expense_Id, ExpenseType) {
 
 
 
-/**
+/******************************
  *  Dealing With Costs
- */
+ ******************************/
 
 $(document).ready(function () {
     LoadCosts(); 
@@ -1591,7 +1897,7 @@ function LoadCosts() {
         });
 
 
-    }
+ }
 function Get_CostById(cost_Id) {
 
     $.ajax({
@@ -1636,9 +1942,19 @@ function Get_CostById(cost_Id) {
 
 $("#btn-addCost").on("click", function () {
 
-    $("#addCostModal").modal("show");
+    //Get next costId
+    $.ajax({
+        type: 'GET',
+        url: '/Costs/Get_NextCostId',
+        success: function (response) {
+            $("#add-costId").val(response.nextCostId)
+        },
+        error: function () {
+            alert("Failed to Get CostId.");
+        }
+    });
 
-    //get Data Car
+    //Get Data Car
     $.ajax({
         type: 'GET',
         url: '/Cars/GetCarToList/',
@@ -1653,6 +1969,8 @@ $("#btn-addCost").on("click", function () {
             alert("Failed to load suppliers.");
         }
     });
+
+    $("#addCostModal").modal("show");
 });
 
 $("#AddCost").off().on("click", function () {

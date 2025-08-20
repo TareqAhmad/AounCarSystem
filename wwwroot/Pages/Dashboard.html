@@ -22,10 +22,10 @@
 <body>
 
     <!-- Header with Top Navigation -->
-    <header class="header">
+    <header class="header d-flex justify-content-between align-items-center">
         <div class="logo fs-4">🌐 Aoun_CarSystem</div>
-        <nav class="nav" id="nav">
-            <a href="/Pages/Dashboard.html">dashboard </a>
+        <nav class="none nav" id="nav-bar">
+            <a href="/Pages/Dashboard.html" class="fw-bold fs-4 bg-warning text-black p-1">dashboard </a>
             <div class="dropdown">
                 <a href="#">Cars ▾</a>
                 <div class="dropdown-content">
@@ -52,20 +52,20 @@
             </div>
             <a href="/Pages/Store.html">store</a>
             <a href="#">Reports</a>
-            <!-- <a href="#">Settings</a> -->
             <a href="../index.html">Logout</a>
         </nav>
-        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+        <div class="menu-toggle none" id="toggle" onclick="toggleMenu()">☰</div>
     </header>
 
-    <div class="container mt-5">
+    <div class="container mt-5" style="padding-bottom : 8rem">
         <h2 class="mb-4 text-center">🚗 Car System Dashboard</h2>
 
+        <!--  First row -->
         <div class="row g-4">
             <div class="col-md-3">
                 <div class="card text-white bg-success shadow">
                     <div class="card-body">
-                        <h5 class="card-title">Available Cars</h5>
+                        <h4 class="card-title fw-bold">Available Cars</h4>
                         <h3 id="availableCars">0</h3>
                     </div>
                 </div>
@@ -74,17 +74,8 @@
             <div class="col-md-3">
                 <div class="card text-white bg-primary shadow">
                     <div class="card-body">
-                        <h5 class="card-title">Count Users</h5>
+                        <h4 class="card-title fw-bold">Count Users</h4>
                         <h3 id="CountUsers">0</h3>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="card text-white bg-warning shadow">
-                    <div class="card-body">
-                        <h5 class="card-title">Total Expenses</h5>
-                        <h3 id="totalExpenses">0</h3>
                     </div>
                 </div>
             </div>
@@ -92,7 +83,16 @@
             <div class="col-md-3">
                 <div class="card text-white bg-danger shadow">
                     <div class="card-body">
-                        <h5 class="card-title">Total Cost</h5>
+                        <h4 class="card-title fw-bold">Total Expenses</h4>
+                        <h3 id="totalExpenses">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card text-white bg-warning  shadow">
+                    <div class="card-body">
+                        <h4 class="card-title fw-bold">Total Cost</h4>
                         <h3 id="totalCost">0</h3>
                     </div>
                 </div>
@@ -104,7 +104,7 @@
             <div class="col-md-3">
                 <div class="card text-white bg-dark shadow">
                     <div class="card-body">
-                        <h5 class="card-title">Cars Sold</h5>
+                        <h4 class="card-title fw-bold">Cars Sold</h4>
                         <h3 id="carsSold">0</h3>
                     </div>
                 </div>
@@ -113,7 +113,7 @@
             <div class="col-md-3">
                 <div class="card text-white bg-info shadow">
                     <div class="card-body">
-                        <h5 class="card-title">Cars In Maintenance</h5>
+                        <h4 class="card-title fw-bold">Cars In Maintenance</h4>
                         <h3 id="carsInMaintenance">0</h3>
                     </div>
                 </div>
@@ -122,8 +122,8 @@
             <div class="col-md-3">
                 <div class="card text-white bg-secondary shadow">
                     <div class="card-body">
-                        <h5 class="card-title">Pending Payments</h5>
-                        <h3 id="pendingPayments">0</h3>
+                        <h4 class="card-title fw-bold">Total Sales</h4>
+                        <button class="btn bg-transparent fs-5 fw-bold text-white btn-outline-light" id="totalSales" >0</button>
                     </div>
                 </div>
             </div>
@@ -131,19 +131,111 @@
             <div class="col-md-3">
                 <div class="card text-white bg-success shadow">
                     <div class="card-body">
-                        <h5 class="card-title">Total Profit</h5>
+                        <h4 class="card-title fw-bold">Total Profit</h4>
                         <h3 id="totalProfit">0</h3>
                     </div>
                 </div>
             </div>
+
+        </div>
+
+        <table class="table mt-5 table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Chassis Number</th>
+                    <th>Car Name</th>
+                    <th>Car Status</th>
+                    <th>Sale Price</th>
+                    <th>Costs</th>
+                    <th>Profit</th>
+
+                </tr>
+            </thead>
+            <tbody id="table-dashboard"></tbody>
+            <tfoot class="table-light">
+                <tr>
+                    <td colspan="6" class="text-end">
+                        <label for="recordCountSelect" class="me-2 fw-bold">Show:</label>
+                        <select id="recordCountSelect" class="form-select d-inline-block w-auto fs-4">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                            <option value="All">All</option>
+                        </select>
+                        <span class="fw-bold ms-2">records</span>
+                    </td>
+                </tr>
+            </tfoot>
+
+        </table>
+
+     
+
+
+        <div class="modal fade" id="detailsSalesModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Details Sales</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h4 class="bg-secondary p-2 text-white fw-bold" id="sale-car-dashboard">Sales</h4>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Invoice Id</th>
+                                <th>Invioce Value</th>
+                                <th>Invoice Date</th>
+                                <th>Payment Type</th>
+                                <th>Customer Name</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dash-detailsSales"></tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary btn-lg" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
+          
+        <div class="modal fade" id="detailsCostsModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Details Costs</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h4 class="bg-warning p-2 text-black fw-bold" id="CostsCarName"></h4>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Cost Id</th>
+                                    <th>CostName</th>
+                                    <th>CostValue</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dash-detailsCosts"></tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary btn-lg" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
         &copy; 2025 Tareq AL-Shbeikat 00962790205293. All rights reserved.
     </footer>
+
 
     <!-- Link to local Bootstrap JS -->
     <script src="/Assets/JS/bootstrap.bundle.min.js"></script>
@@ -159,22 +251,24 @@
             Call_FunctionsDashboard();
         });
 
+
+
         function Call_FunctionsDashboard() {
 
             Get_AvailabeCars();
 
-            Get_CountUsers(); 
+            Get_CountUsers();
 
-            Get_TotalExpenses();
+            Get_TotalSales();
+
+            /* Get_TotalExpenses();*/
 
             Get_TotalCosts();
 
             Get_SoldCars();
 
             Get_InMaintenanceCars();
-          
 
-            console.log("Dashboard ready");
         }
     </script>
 

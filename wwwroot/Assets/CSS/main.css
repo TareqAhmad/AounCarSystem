@@ -25,6 +25,10 @@
 .w-15 {
     width: 15% !important;
 }
+.none {
+    display: none !important; 
+}
+
 
 * {
     margin: 0;
@@ -59,6 +63,13 @@ button {
 section {
     min-height: 50vh;
 }
+
+
+.btn-outline-light:hover {
+    background-color: white !important;
+    color: black !important;
+}
+
 
 /* End global Rules  */
 
@@ -141,6 +152,7 @@ section {
 .nav {
     display: flex;
     gap: 1rem;
+    z-index:9999;
 }
 
     .nav a {

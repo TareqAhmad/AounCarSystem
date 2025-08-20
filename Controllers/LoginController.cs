@@ -23,47 +23,48 @@ namespace AounCarSystem.Controllers
         [HttpPost("/Login/Authenticate")]
         public IActionResult Authenticate(string username, string password)
         {
-
-            string connStr = _config.GetConnectionString("MySqlConn");
-
-            using (var conn = new MySqlConnection(connStr))
+            try
             {
-                
-               
-                string sql = @"SELECT *  
-                               FROM Users 
-                               WHERE userName = @userName 
-                               AND password = @password";
+                string connStr = _config.GetConnectionString("MySqlConn");
 
-                using (var cmd = new MySqlCommand(sql,conn))
+                using (var conn = new MySqlConnection(connStr))
                 {
 
-                    cmd.Parameters.AddWithValue("@userName", username);
-                    cmd.Parameters.AddWithValue("@password", password);
 
-                    conn.Open();
-                    using (var reader = cmd.ExecuteReader()) 
+                    string sql = @"SELECT *  
+                                   FROM Users 
+                                   WHERE userName = @userName 
+                                   AND password = @password";
+
+                    using (var cmd = new MySqlCommand(sql, conn))
                     {
-                        if(reader.Read())
-                        {
-                            return Json(new { success = true });
-                        }
-                     
 
-                        return Json(new { success = false});
-                        
+                        cmd.Parameters.AddWithValue("@userName", username);
+                        cmd.Parameters.AddWithValue("@password", password);
+
+                        conn.Open();
+                        var reader = cmd.ExecuteReader();
+                      
+                        while (reader.Read())
+                        {
+                            int permission = reader.IsDBNull(3) ? 0 : reader.GetInt32(3);
+                            return  Json(new { success = true, permission });
+                        }
+                        return Json(new { success = false }); 
 
 
                     }
 
+
+
+
                 }
-                
-
-
 
             }
-
-
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
+            }
 
 
 

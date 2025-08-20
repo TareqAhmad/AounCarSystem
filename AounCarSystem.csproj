@@ -5,6 +5,11 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove=".gitattributes" />
+    <None Remove=".gitignore" />
+  </ItemGroup>
   
   
   <ItemGroup>
@@ -12,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Repositories\" />
     <Folder Include="wwwroot\Images\" />
   </ItemGroup>
 
@@ -36,7 +40,6 @@
     <None Include="wwwroot\Pages\Store.html" />
     <None Include="wwwroot\Pages\Suppliers.html" />
     <None Include="wwwroot\Pages\Users.html" />
-    <None Include="wwwroot\Pages\ViewResults.html" />
   </ItemGroup>
 
 

@@ -19,45 +19,53 @@ namespace AounCarSystem.Controllers
         [HttpGet("/Expenses/Get_AllExpenses")]
         public IActionResult Get_AllExpenses()
         {
-            var Expenses = new List<ClsExpenses>();
-
-            string connStr = _config.GetConnectionString("MySqlConn");
-
-            using (var conn = new MySqlConnection(connStr))
+            try
             {
-                
-                string sql = @"SELECT E.Expense_Id, E.ExpenseType, E.Amount, E.ExpenseDate, E.Description, 
+
+                var Expenses = new List<ClsExpenses>();
+
+                string connStr = _config.GetConnectionString("MySqlConn");
+
+                using (var conn = new MySqlConnection(connStr))
+                {
+
+                    string sql = @"SELECT E.Expense_Id, E.ExpenseType, E.Amount, E.ExpenseDate, E.Description, 
                                       C.carName
                              FROM Expenses E
                              LEFT JOIN Cars C ON E.chassisNumber = C.chassisNumber";
 
 
-                using (var cmd = new MySqlCommand(sql, conn))
-                {
-
-                    conn.Open();
-
-                    var reader = cmd.ExecuteReader();
-
-                    while (reader.Read())
+                    using (var cmd = new MySqlCommand(sql, conn))
                     {
 
-                        Expenses.Add(new ClsExpenses
+                        conn.Open();
+
+                        var reader = cmd.ExecuteReader();
+
+                        while (reader.Read())
                         {
 
-                            Expense_Id =Convert.ToInt32(reader["expense_Id"]),
-                            ExpenseType = reader["expenseType"].ToString(),
-                            Amount =Convert.ToDecimal( reader["amount"]),
-                            ExpenseDate =reader["expenseDate"].ToString(),
-                            Description = reader["description"].ToString(),
-                            CarName = reader["carName"].ToString()
+                            Expenses.Add(new ClsExpenses
+                            {
 
-                        });
+                                Expense_Id = reader.IsDBNull(0) ? 0 : reader.GetInt32(0),
+                                ExpenseType = reader.IsDBNull(1) ? "" : reader.GetString(1),
+                                Amount =  reader.IsDBNull(2) ? 0 : reader.GetDecimal(2),
+                                ExpenseDate = reader.IsDBNull(3) ? "" : reader.GetDateTime(3).ToString("yyyy-MM-dd"),
+                                Description =reader.IsDBNull(4) ? "" : reader.GetString(4),
+                                CarName = reader.IsDBNull(5) ? "" : reader.GetString(5)
+
+                            });
+                        }
+                        return Json(Expenses);
                     }
-                    return Json(Expenses);
+
+
                 }
-
-
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
             }
         }
 
@@ -65,46 +73,53 @@ namespace AounCarSystem.Controllers
         [HttpGet("/Expenses/Get_ExpenseById")]
         public IActionResult Get_ExpenseById(int expenseId)
         {
-
-            var Expenses = new List<ClsExpenses>();
-
-            string connStr = _config.GetConnectionString("MySqlConn");
-
-            using (var conn = new MySqlConnection(connStr))
+            try
             {
-               
-                string sql = @"SELECT E.Expense_Id, E.ExpenseType, E.Amount, E.ExpenseDate, E.Description, 
+                var Expenses = new List<ClsExpenses>();
+
+                string connStr = _config.GetConnectionString("MySqlConn");
+
+                using (var conn = new MySqlConnection(connStr))
+                {
+
+                    string sql = @"SELECT E.Expense_Id, E.ExpenseType, E.Amount, E.ExpenseDate, E.Description, 
                                       E.ChassisNumber
                              FROM Expenses E
                              WHERE E.Expense_Id = @ExpenseId";
 
 
-                using (var cmd = new MySqlCommand(sql, conn))
-                {
-
-                    cmd.Parameters.AddWithValue("@ExpenseId", expenseId);
-
-                    conn.Open();
-                    var reader = cmd.ExecuteReader();
-
-
-                    while (reader.Read())
+                    using (var cmd = new MySqlCommand(sql, conn))
                     {
 
-                        Expenses.Add(new ClsExpenses
+                        cmd.Parameters.AddWithValue("@ExpenseId", expenseId);
+
+                        conn.Open();
+                        var reader = cmd.ExecuteReader();
+
+
+                        while (reader.Read())
                         {
-                            Expense_Id = Convert.ToInt32(reader["Expense_Id"]),
-                            ExpenseType = reader["expenseType"].ToString(),
-                            Amount = Convert.ToDecimal(reader["Amount"]),
-                            ExpenseDate = reader["expenseDate"].ToString(),
-                            Description = reader["Description"].ToString(),
-                            ChassisNumber = Convert.ToInt32(reader["ChassisNumber"])
 
-                        });
+                            Expenses.Add(new ClsExpenses
+                            {
+
+                                Expense_Id = reader.IsDBNull(0) ? 0 : reader.GetInt32(0),
+                                ExpenseType = reader.IsDBNull(1) ? "" : reader.GetString(1),
+                                Amount = reader.IsDBNull(2) ? 0 : reader.GetDecimal(2),
+                                ExpenseDate = reader.IsDBNull(3) ? "" : reader.GetDateTime(3).ToString("yyyy-MM-dd"),
+                                Description = reader.IsDBNull(4) ? "" : reader.GetString(4),
+                                ChassisNumber = reader.IsDBNull(5) ? 0 : reader.GetInt32(5)
+
+                            });
+                        }
+                        return Json(Expenses);
                     }
-                    return Json(Expenses);
-                }
 
+                }
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
             }
 
 
@@ -115,31 +130,37 @@ namespace AounCarSystem.Controllers
         [HttpPost("/Expenses/AddExpense")]
         public IActionResult AddExpense(int ExpenseId, string ExpenseType, decimal ExpenseAmount, string ExpenseDate, string ExpenseDescription, int CarId)
         {
-
-            string connStr = _config.GetConnectionString("MySqlConn");
-
-            using (var conn = new MySqlConnection(connStr))
+            try
             {
-                string sql = @"INSERT INTO Expenses(Expense_Id, ExpenseType, Amount, ExpenseDate, Description, ChassisNumber)
-                        VALUES(@ExpenseId , @ExpenseType, @ExpenseAmount, ExpenseDate,@ExpenseDescription, @CarId)";
+                string connStr = _config.GetConnectionString("MySqlConn");
 
-                using (var cmd = new MySqlCommand(sql, conn))
+                using (var conn = new MySqlConnection(connStr))
                 {
-                    cmd.Parameters.AddWithValue("@ExpenseId", ExpenseId);
-                    cmd.Parameters.AddWithValue("@ExpenseType", ExpenseType);
-                    cmd.Parameters.AddWithValue("@ExpenseAmount", ExpenseAmount);
-                    cmd.Parameters.AddWithValue("@ExpenseDate",ExpenseDate);
-                    cmd.Parameters.AddWithValue("@ExpenseDescription", ExpenseDescription);
-                    cmd.Parameters.AddWithValue("@CarId", CarId);
+                    string sql = @"INSERT INTO Expenses(Expense_Id, ExpenseType, Amount, ExpenseDate, Description, ChassisNumber)
+                               VALUES(@ExpenseId , @ExpenseType, @ExpenseAmount, ExpenseDate,@ExpenseDescription, @CarId)";
+
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@ExpenseId", ExpenseId);
+                        cmd.Parameters.AddWithValue("@ExpenseType", ExpenseType);
+                        cmd.Parameters.AddWithValue("@ExpenseAmount", ExpenseAmount);
+                        cmd.Parameters.AddWithValue("@ExpenseDate", ExpenseDate);
+                        cmd.Parameters.AddWithValue("@ExpenseDescription", ExpenseDescription);
+                        cmd.Parameters.AddWithValue("@CarId", CarId);
 
 
-                    conn.Open();
-                    int result = cmd.ExecuteNonQuery();
-                    return result > 0 ? Json(new { success = true }) : Json(new { success = false });
+                        conn.Open();
+                        int result = cmd.ExecuteNonQuery();
+                        return result > 0 ? Json(new { success = true }) : Json(new { success = false });
+
+                    }
+
 
                 }
-
-
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
             }
 
 
@@ -149,32 +170,39 @@ namespace AounCarSystem.Controllers
         [HttpPost("Expenses/UpdateExpense")]
         public IActionResult UpdateExpense(int expensId, string ExpenseType, decimal ExpenseAmount, DateTime ExpenseDate, string ExpenseDescription)
         {
-            string connStr = _config.GetConnectionString("MySqlConn");
-
-            using (var conn = new MySqlConnection(connStr))
+            try
             {
-                string sql = @"UPDATE Expenses 
-                                SET ExpenseType = @ExpenseType,
+                string connStr = _config.GetConnectionString("MySqlConn");
+
+                using (var conn = new MySqlConnection(connStr))
+                {
+                    string sql = @"UPDATE Expenses 
+                                   SET ExpenseType = @ExpenseType,
                                    Amount = @ExpenseAmount,
                                    ExpenseDate = @ExpenseDate,
                                    Description = @ExpenseDescription
-                               WHERE Expense_Id = @expensId";
+                                   WHERE Expense_Id = @expensId";
 
-                using (var cmd = new MySqlCommand(sql, conn))
-                {
-                    cmd.Parameters.AddWithValue("@ExpenseType", ExpenseType);
-                    cmd.Parameters.AddWithValue("@ExpenseAmount", ExpenseAmount);
-                    cmd.Parameters.AddWithValue("@ExpenseDate", ExpenseDate.ToString("yyyy-MM-dd"));
-                    cmd.Parameters.AddWithValue("@ExpenseDescription", ExpenseDescription);
-                    cmd.Parameters.AddWithValue("@expensId", expensId);
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@ExpenseType", ExpenseType);
+                        cmd.Parameters.AddWithValue("@ExpenseAmount", ExpenseAmount);
+                        cmd.Parameters.AddWithValue("@ExpenseDate", ExpenseDate.ToString("yyyy-MM-dd"));
+                        cmd.Parameters.AddWithValue("@ExpenseDescription", ExpenseDescription);
+                        cmd.Parameters.AddWithValue("@expensId", expensId);
 
-                    conn.Open();
-                    int result = cmd.ExecuteNonQuery();
-                    return result > 0 ? Json(new { success = true }) : Json(new { success = false });
+                        conn.Open();
+                        int result = cmd.ExecuteNonQuery();
+                        return result > 0 ? Json(new { success = true }) : Json(new { success = false });
+
+                    }
+
 
                 }
-
-
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
             }
 
 
@@ -184,26 +212,29 @@ namespace AounCarSystem.Controllers
         [HttpPost("/Expenses/DeleteExpense")]
         public IActionResult DeleteExpense(int expenseId)
         {
-            string connStr = _config.GetConnectionString("MySqlConn");
-
-            using (var conn = new MySqlConnection(connStr))
+            try
             {
-                string sql = @"DELETE FROM Expenses E WHERE E.Expense_Id = @ExpenseId";
+                string connStr = _config.GetConnectionString("MySqlConn");
 
-                using (var cmd = new MySqlCommand(sql, conn))
+                using (var conn = new MySqlConnection(connStr))
                 {
-                    cmd.Parameters.AddWithValue("@ExpenseId", expenseId);
-                    conn.Open();
-                    int Result = cmd.ExecuteNonQuery();
+                    string sql = @"DELETE FROM Expenses E WHERE E.Expense_Id = @ExpenseId";
 
-                    if (Result > 0)
-                        return Json(new { success = true });
-                    else
-                        return Json(new { success = false });
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@ExpenseId", expenseId);
+                        conn.Open();
+                        int result = cmd.ExecuteNonQuery();
+                        return result > 0 ? Json(new { success = true }) : Json(new { success = false });
+
+                    }
+
 
                 }
-
-
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
             }
 
 
@@ -213,47 +244,59 @@ namespace AounCarSystem.Controllers
         [HttpGet("/Expenses/Get_TotalExpenses")]
         public IActionResult Get_TotalExpenses()
         {
-            string connStr = _config.GetConnectionString("MySqlConn"); 
-
-            using(var conn = new MySqlConnection(connStr))
+            try
             {
-                string sql = "SELECT IFNULL(SUM(amount),0) FROM expenses"; 
+                string connStr = _config.GetConnectionString("MySqlConn");
 
-                using (var cmd = new MySqlCommand(sql, conn))
+                using (var conn = new MySqlConnection(connStr))
                 {
-                    conn.Open();
-                    object SumExpenses = cmd.ExecuteScalar();
-                    decimal result = Convert.ToDecimal(SumExpenses);
+                    string sql = "SELECT IFNULL(SUM(amount),0) FROM expenses";
 
-                    return Json(result);
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
+                        conn.Open();
+                        object SumExpenses = cmd.ExecuteScalar();
+                        decimal result = Convert.ToDecimal(SumExpenses);
 
+                        return Json(result);
+
+                    }
 
                 }
-
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
             }
         }
 
 
-        [HttpGet("/Users/Get_NextExpenseId")]
+        [HttpGet("/Expenses/Get_NextExpenseId")]
         public IActionResult Get_NextExpenseId()
         {
-
-            string connStr = _config.GetConnectionString("MySqlconn");
-
-            using (var conn = new MySqlConnection(connStr))
+            try
             {
-                string sql = @"SELECT IFNULL(MAX(Expense_Id),0) + 1  FROM Expenses";
+                string connStr = _config.GetConnectionString("MySqlconn");
 
-                using (var cmd = new MySqlCommand(sql, conn))
+                using (var conn = new MySqlConnection(connStr))
                 {
-                    conn.Open();
-                    object result = cmd.ExecuteScalar();
-                    int nextExpenseId = Convert.ToInt32(result);
-                    return Json(nextExpenseId);
+                    string sql = @"SELECT IFNULL(MAX(Expense_Id),0) + 1  FROM Expenses";
+
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
+                        conn.Open();
+                        object result = cmd.ExecuteScalar();
+                        int nextExpenseId = Convert.ToInt32(result);
+                        return Json(new { nextExpenseId });
+                    }
+
+
+
                 }
-
-
-
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
             }
         }
 

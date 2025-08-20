@@ -23,7 +23,7 @@
     <header class="header">
         <div class="logo fs-4"> 🌐  Aoun_CarSystem</div>
         <nav class="nav" id="nav">
-            <a href="/Pages/Dashboard.html">dashboard </a>
+            <a href="/Pages/Dashboard.html" class="fw-bold fs-4 bg-warning text-black p-1" >dashboard </a>
             <div class="dropdown">
                 <a href="/Pages/Cars.html">Cars ▾</a>
                 <div class="dropdown-content">
@@ -78,6 +78,21 @@
                 </tr>
             </thead>
             <tbody id="car-table-body"></tbody>
+            <tfoot class="table-light">
+                <tr>
+                    <td colspan="8" class="text-end">
+                        <label for="Car-recordCountSelect" class="me-2 fw-bold">Show:</label>
+                        <select id="Car-recordCountSelect" class="form-select d-inline-block w-auto fs-4">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                            <option value="All">All</option>
+                        </select>
+                        <span class="fw-bold ms-2">records</span>
+                    </td>
+                </tr>
+            </tfoot>
         </table>
 
         <div class="modal fade" id="addCarModal" tabindex="-1">
@@ -161,8 +176,15 @@
                             <input type="number" id="CarPrice" class="form-control">
                         </div>
                         <div class="mb-2">
-                            <label>Status</label>
-                            <input type="text" id="CarStatus" class="form-control">
+                            <label for="edit-CarStatus">Status</label>
+                            <select id="edit-CarStatus" class="form-control">
+                                <option value="">-- Select Status --</option>
+                                <option value="Available"> Available </option>
+                                <option value="Sold"> Sold </option>
+                                <option value="In Maintenance"> In Maintenance </option>
+                                <option value="Scrapped"> Scrapped </option>
+                                <option value="In Customs"> In Customs </option>
+                            </select>
                         </div>
                         <div class="mb-2">
                             <label>Supplier Name</label>
